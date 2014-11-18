@@ -6,6 +6,7 @@ from kivy.uix.widget import Widget
 from kivy.uix.label import Label
 from kivy.uix.button import Button
 from kivy.config import Config
+from kivy.graphics import Rectangle
 
 class Screen( Widget ):
 
@@ -18,11 +19,13 @@ class Screen( Widget ):
         self.drawMainMenuView()
 
     def drawMainMenuView(self):
+        self.clear_widgets()
         self.MainMenuView = MainMenuView()
         self.add_widget( self.MainMenuView )
         self.MainMenuView.draw()
 
     def drawGameScreenView(self):
+        self.clear_widgets()
         gameScreenView = GameScreenView()
         self.add_widget( gameScreenView )
         gameScreenView.draw()
@@ -30,7 +33,9 @@ class Screen( Widget ):
 class MainMenuView( Widget ):
 
     def draw(self):
-        self.clear_widgets()
+        self.addStartLabel()
+
+    def addStartLabel(self):
         randomlabel = Label(text='[ref=startGame]START[/ref]', markup=True)
         self.add_widget( randomlabel )
         def drawGameScreenView( object, value ):
@@ -40,21 +45,26 @@ class MainMenuView( Widget ):
 class GameScreenView( Widget ):
 
     def draw(self):
-        self.clear_widgets()
+        self.drawGrid()
+
         randomlabel = Label(text='GameScreenView')
         self.add_widget( randomlabel )
 
+    def drawGrid(self):
+        self.canvas.add(Rectangle(pos=(100, 100), size=(30, 30)))
+
+    #def createGrid(self):
+
 class BattleshipApp(App):
 
-    game = None
+    screen = None
 
     def build(self):
-        self.game = Screen()
-        return self.game
+        self.screen = Screen()
+        return self.screen
 
     def on_start(self):
-        #self
-        print('zzzz')
+        print('start')
 
 
 if __name__ == '__main__':
