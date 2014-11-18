@@ -7,6 +7,7 @@ from kivy.uix.label import Label
 from kivy.uix.button import Button
 from kivy.config import Config
 from kivy.graphics import Rectangle
+from kivy.core.text import Label as CoreLabel
 
 class Screen( Widget ):
 
@@ -44,16 +45,58 @@ class MainMenuView( Widget ):
 
 class GameScreenView( Widget ):
 
+    grid = None
     def draw(self):
         self.drawGrid()
 
-        randomlabel = Label(text='GameScreenView')
-        self.add_widget( randomlabel )
-
     def drawGrid(self):
-        self.canvas.add(Rectangle(pos=(100, 100), size=(30, 30)))
+        self.grid = Grid()
+        self.add_widget( self.grid )
 
-    #def createGrid(self):
+class Grid( Widget ):
+    gridRectSize = 50
+    sizeMultiplier = None
+    gridElements = None
+
+    def __init__(self, startX=0, startY=0, sizeMultiplier=1 ):
+        super().__init__()
+        self.sizeMultiplier = sizeMultiplier
+        self.addGridElements()
+        def doCalculation(x,u):
+            print('click')
+        self.bind( on_press=doCalculation)
+
+    def addGridElements(self):  #FIXME - REDO USING LAYOUT
+        self.gridElements = dict()
+        rectStartX = 0
+        rectStartY = 11*(self.gridRectSize+1)
+        for rowNumber in range(0,11):
+            self.gridElements[ rowNumber ] = dict()
+            for colNr, colCharacter in enumerate(list(' ABCDEFGHIJ')):
+                if rowNumber == 0 or colNr==0:
+                    my_label = CoreLabel() #http://kivy.org/docs/api-kivy.core.text.html?highlight=text#
+                    if rowNumber==0:
+                        my_label.text = colCharacter
+                    else:
+                        my_label.text = str(rowNumber)
+                    my_label.text_size = (25,25)
+                    my_label.refresh()
+                    hello_texture = my_label.texture
+                    rectangle = Rectangle(texture=hello_texture, pos=[rectStartX, rectStartY], size=[self.gridRectSize, self.gridRectSize])
+                    self.canvas.add( rectangle )
+                else:
+                    rectangle = Rectangle(pos=[rectStartX, rectStartY], size=[self.gridRectSize, self.gridRectSize])
+                    self.gridElements[ rowNumber ][ colCharacter ] = rectangle
+                    self.canvas.add( rectangle )
+                rectStartX += self.gridRectSize + 1
+                if colNr==0:
+                    print(rowNumber, colCharacter)
+                    print(rectangle.pos)
+                    print('----')
+            rectStartX = 0
+            rectStartY -= self.gridRectSize + 1
+
+    #def addGridElement(self, row):
 
 class BattleshipApp(App):
 

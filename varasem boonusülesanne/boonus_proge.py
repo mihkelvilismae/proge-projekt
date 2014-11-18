@@ -24,6 +24,7 @@ class BudgetScreen(BoxLayout):
         Config.set('graphics', 'height', '600')
         super().__init__(**kwargs)
         self.orientation = 'vertical'
+
         self.resetDataValues()
         self.startDrawing()
 
@@ -117,6 +118,14 @@ class BudgetScreen(BoxLayout):
         childSupportLabel = Label(text='* lastetoetus neto (€)', color=(1,1,0,1))
         childSupportResult = Label(text=str(dataValues['childSupport']['netIncome']))
 
+        def doCalculation(obj):
+            print('xxx')
+            self.getNewValuesFromInputFields()
+            self.startDrawing()
+
+        childSupportResult.bind( on_press=doCalculation)
+
+
         calculationResultsLayout.add_widget( familyNetLabel )
         calculationResultsLayout.add_widget( familyNetResult )
         calculationResultsLayout.add_widget( motherNetLabel )
@@ -176,6 +185,7 @@ class MyApp(App):
 
     def build(self):
         main = BudgetScreen()
+
         return main
 
 
