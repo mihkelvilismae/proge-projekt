@@ -13,21 +13,53 @@ from kivy.uix.gridlayout import GridLayout
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.relativelayout import RelativeLayout
 from kivy.uix.stacklayout import StackLayout
+from kivy.properties import StringProperty, ObjectProperty
+
+
 
 #---------------------------------------------------------------------------------------------------
-#       MainMenuView
+#       Config
 #---------------------------------------------------------------------------------------------------
+class MainConfig():
+    def __init__(self, sizeMultiplier=1, **kwargs):
+        self.gridConfig = GridConfig()
+    # application window size:
+        self.windowWidth = 1600
+        self.windowHeight = 800
+        self.windowSize = (self.windowWidth, self.windowHeight)
+    #ship size
+        self.shipBlockHeight = self.gridConfig.gridElementSize[0]+5
+        self.shipBlockWidth = self.gridConfig.gridElementSize[0]+5
+
 class GridConfig():
     def __init__(self, sizeMultiplier=1, **kwargs):
         if sizeMultiplier==1:
-            self.gridSize = (800,800)
-            self.gridElementSize = (50,50)
-            self.battlefieldRectangleSize = (20,20)
+            self.gridHeight = 600
+            self.gridWidth = 600
         else:
-            self.gridSize = (400,400)
-            self.gridElementSize = (25,25)
-            self.battlefieldRectangleSize = (40,40)
+            self.gridHeight = 400
+            self.gridWidth = 400
+        self.gridElementSize = (self.gridWidth/11, self.gridHeight/11)
+        self.battlefieldRectangleSize = (self.gridWidth/11-5, self.gridHeight/11-5)
 
+#---------------------------------------------------------------------------------------------------
+#       SessionStatus
+#---------------------------------------------------------------------------------------------------
+sessionStatus = None #FIXME: SEE BELOW IN MAIN APP
+class SessionStatus( Widget ):
+    selectedShip = ObjectProperty(None)
+
+    def __init__(self, **kwargs):
+        self.bind(selectedShip=self.onSelectedShipChange)
+
+    def onSelectedShipChange(self, instance, newValue):
+        print('seelectedwdaw')
+
+    def canShipBePlaced(self):
+        1
+#---------------------------------------------------------------------------------------------------
+#       MainMenuView
+#---------------------------------------------------------------------------------------------------
 class MainMenuView( Widget ):
 
     def draw(self):
@@ -44,15 +76,21 @@ class MainMenuView( Widget ):
 #       GameScreenView
 #---------------------------------------------------------------------------------------------------
 class GameScreenView( BoxLayout ):
+    shipPlacementLocation = None
     smallerGrid = None
     mainGrid = None
 
     def __init__(self, **kwargs):
-        super().__init__(cols=2,size=(1200,600),**kwargs)
+        super().__init__(cols=2,**kwargs)
 
     def draw(self):
         self.drawMainGrid()
         #self.drawSmallerGrid()
+        self.drawShipPlacementLocation()
+
+    def drawShipPlacementLocation(self):
+        self.shipPlacementLocation = ShipPlacementLocation()
+        self.add_widget( self.shipPlacementLocation )
 
     def drawSmallerGrid(self): #todo: can be joined with drawMainGrid()?
         self.smallerGrid = Grid(sizeMultiplier=2)
@@ -65,7 +103,66 @@ class GameScreenView( BoxLayout ):
         self.add_widget( self.mainGrid )
 
 #---------------------------------------------------------------------------------------------------
-#       GRID
+#       Ship
+#---------------------------------------------------------------------------------------------------
+class Ship( Widget ):
+    STATUS_WAITING_TO_BE_PICKED_UP = 'waitingToBePickedUp'
+    STATUS_PLACED = 'placed'
+    STATUS_SELECTED = 'selected'
+
+    shipStatus = StringProperty( STATUS_WAITING_TO_BE_PICKED_UP ) # baseerub nupp.py näitel
+    length = 1
+    color = Color(1,1,0)
+    position = [0,100]
+
+    def __init__(self, length=1, **kwargs):
+        self.mainConfig = MainConfig()
+        super().__init__(size_hint=(None,None), pos=self.position, size=self.calculateShipSize(length), **kwargs)
+        self.length = length
+        self.drawShip()
+        self.bind(shipStatus=self.on_status)
+
+# EVENT BINDINGS (start):
+    def on_status(self, instance, pos): #this fires when the status changes
+        if self.shipStatus==self.STATUS_SELECTED:
+            self.color = Color(1,0,1)
+            self.pos = (150,222)
+            sessionStatus.selectedShip = self
+        elif self.shipStatus==self.STATUS_WAITING_TO_BE_PICKED_UP:
+            self.color = Color(1,1,0)
+
+        self.drawShip()
+
+    def on_touch_down(self, touch): #this fires on the event that someone clicks on the ship
+        if self.collide_point(*touch.pos):
+            self.shipStatus = self.STATUS_SELECTED
+            return True
+# EVENT BINDINGS (end)
+
+    def drawShip(self):
+        self.canvas.clear()
+        elementRectangle = Rectangle(pos=self.pos, size=self.size)
+        self.canvas.add( self.color )
+        self.canvas.add( elementRectangle )
+
+    def calculateShipSize(self, shipLength):
+        return (self.mainConfig.shipBlockWidth * shipLength, self.mainConfig.shipBlockHeight)
+
+
+#---------------------------------------------------------------------------------------------------
+#       Ship placement location
+#---------------------------------------------------------------------------------------------------
+class ShipPlacementLocation( RelativeLayout ): #todo: this should also show status of bombed ships
+    def __init__(self, **kwargs):
+        super().__init__(cols=2,**kwargs)
+        self.add_widget( Ship(2) )
+        #self.add_widget( Ship() )
+
+class ShipCount( Widget ):
+    def __init__(self, **kwargs):
+        super().__init__(cols=2,**kwargs)
+#---------------------------------------------------------------------------------------------------
+#       Grid
 #---------------------------------------------------------------------------------------------------
 class Grid( GridLayout ):
     sizeMultiplier = 1
@@ -73,9 +170,9 @@ class Grid( GridLayout ):
     gridConfig = None
 
     def __init__(self, sizeMultiplier=1 ):
-        self.sizeMultiplier = sizeMultiplier #TODO implement this
+        self.sizeMultiplier = sizeMultiplier
         self.gridConfig = GridConfig(sizeMultiplier=self.sizeMultiplier)
-        super().__init__(cols=11, size_hint=(None,None), size = self.gridConfig.gridSize)
+        super().__init__(cols=11)
 
     def addGridElements(self):
         self.gridElements = dict()
@@ -93,37 +190,37 @@ class Grid( GridLayout ):
                 self.add_widget( gridElement )
 
 #---------------------------------------------------------------------------------------------------
-#       GRID ELEMENTS
+#       Grid Elements
 #---------------------------------------------------------------------------------------------------
 class GridElement( RelativeLayout ):
-    def __init__(self, text='', size_hint = (None,None), size=(600,600), **kwargs): #xxxxxxxxxxxxxxxxx
-        super().__init__(**kwargs)
-        print(self.size)
+    def __init__(self, gridConfig, **kwargs):
+        super().__init__(size_hint = (None,None),size=gridConfig.gridElementSize, **kwargs)
 
 class GridBattlefieldElement( GridElement ):
     def __init__(self, gridConfig, **kwargs):
-        super().__init__(size_hint = (None,None), size=(600,600), **kwargs)
-        elementRectangle = Rectangle( pos=[5,5] )
+        super().__init__(gridConfig=gridConfig, **kwargs)
+    #this is the coloured area inside the element (that makes it look as a grid):
+        elementRectangle = Rectangle( size=gridConfig.battlefieldRectangleSize, pos=[5,5] )
         self.canvas.add( elementRectangle )
 
 class GridLabelElement( GridElement ):
-    def __init__(self, text='', **kwargs):
-        super().__init__(**kwargs)
-        print(self.height)
-        print(self.width)
+    def __init__(self, gridConfig, text='', **kwargs):
+        super().__init__(gridConfig=gridConfig, **kwargs)
         elementText = Label(text=str(text))
         self.add_widget( elementText )
 
 #---------------------------------------------------------------------------------------------------
-#       PAGE INITALIZATIONS
+#       Page Initializations
 #---------------------------------------------------------------------------------------------------
 class Screen( Widget ):
 
+    config = None
     MainMenuView = None
 
     def __init__(self, **kwargs):
-        Config.set('graphics', 'width', '1600') #this has to be done before calling super()
-        Config.set('graphics', 'height', '700') #todo  somekind of config?
+        self.config = MainConfig()
+        Config.set('graphics', 'width', self.config.windowWidth) #this has to be done before calling super()
+        Config.set('graphics', 'height', self.config.windowHeight) #todo  somekind of config?
         super().__init__(**kwargs)
         self.drawMainMenuView()
 
@@ -135,18 +232,20 @@ class Screen( Widget ):
 
     def drawGameScreenView(self):
         self.clear_widgets()
-        gameScreenView = GameScreenView()
-        self.add_widget( gameScreenView )
-        gameScreenView.draw()
+        self.gameScreenView = GameScreenView( size=self.config.windowSize)
+        self.add_widget( self.gameScreenView )
+        self.gameScreenView.draw()
 
 #---------------------------------------------------------------------------------------------------
-#       APP START
+#       App Start
 #---------------------------------------------------------------------------------------------------
 class BattleshipApp(App):
 
     screen = None
 
     def build(self):
+        global sessionStatus #FIXME: THIS IS MOST CERTAINLY NOT THE WAY TO DO IT, BUT HOW ELSE ?!?!?
+        sessionStatus = SessionStatus()
         self.screen = Screen()
         return self.screen
 
