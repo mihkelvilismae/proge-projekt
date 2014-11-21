@@ -15,8 +15,6 @@ from kivy.uix.relativelayout import RelativeLayout
 from kivy.uix.stacklayout import StackLayout
 from kivy.properties import StringProperty, ObjectProperty
 
-
-
 #---------------------------------------------------------------------------------------------------
 #       Config
 #---------------------------------------------------------------------------------------------------
@@ -43,20 +41,48 @@ class GridConfig():
         self.battlefieldRectangleSize = (self.gridWidth/11-5, self.gridHeight/11-5)
 
 #---------------------------------------------------------------------------------------------------
-#       SessionStatus
+#       Game
 #---------------------------------------------------------------------------------------------------
-sessionStatus = None #FIXME: SEE BELOW IN MAIN APP
-class SessionStatus( Widget ):
+game = None #FIXME: SEE BELOW IN MAIN APP
+
+class Game( Widget ):
     selectedShip = ObjectProperty(None)
+    ships = list()
+    mainGrid = None
 
     def __init__(self, **kwargs):
-        self.bind(selectedShip=self.onSelectedShipChange)
-
-    def onSelectedShipChange(self, instance, newValue):
-        print('seelectedwdaw')
-
-    def canShipBePlaced(self):
         1
+        #self.bind(selectedShip=self.onSelectedShipChange)
+
+    def setSelectedShip(self, ship):
+        self.unselectShips( ship )
+        self.selectedShip = ship
+
+    #def onSelectedShipChange(self, instance, newValue):
+    #    #print('seelectedwdaw')
+    #    1
+
+    def canShipBePlaced(self, ship, battlefieldGridElement):
+        if not isinstance( ship, Ship ):
+            return False
+        return True
+
+    def placeShipToGrid(self, ship, battlefieldGridElement):
+        ship.shipStatus = ship.STATUS_PLACED
+        ship.placeShip( battlefieldGridElement.pos )
+        self.setSelectedShip(ObjectProperty(None))
+
+    def canRotateShip(self, ship):
+        return True
+
+    def rotateShip(self, ship):
+        ship.rotateShip()
+
+    def unselectShips(self, shipNotToUnselect=None):
+        for ship in self.ships:
+            if ship!=shipNotToUnselect:
+                ship.shipStatus = ship.STATUS_WAITING_TO_BE_PICKED_UP
+
 #---------------------------------------------------------------------------------------------------
 #       MainMenuView
 #---------------------------------------------------------------------------------------------------
@@ -126,18 +152,31 @@ class Ship( Widget ):
     def on_status(self, instance, pos): #this fires when the status changes
         if self.shipStatus==self.STATUS_SELECTED:
             self.color = Color(1,0,1)
-            self.pos = (150,222)
-            sessionStatus.selectedShip = self
+            game.setSelectedShip(self)
         elif self.shipStatus==self.STATUS_WAITING_TO_BE_PICKED_UP:
+            self.color = Color(1,1,0)
+        elif self.shipStatus==self.STATUS_PLACED:
             self.color = Color(1,1,0)
 
         self.drawShip()
 
     def on_touch_down(self, touch): #this fires on the event that someone clicks on the ship
         if self.collide_point(*touch.pos):
+            if self.shipStatus == self.STATUS_SELECTED:
+                if game.canRotateShip( self ):
+                    game.rotateShip( self )
             self.shipStatus = self.STATUS_SELECTED
             return True
+
 # EVENT BINDINGS (end)
+
+    def rotateShip(self):
+        self.size = (self.height, self.width)
+        self.drawShip()
+
+    def placeShip(self, position):
+        self.pos = position
+        self.drawShip()
 
     def drawShip(self):
         self.canvas.clear()
@@ -152,11 +191,16 @@ class Ship( Widget ):
 #---------------------------------------------------------------------------------------------------
 #       Ship placement location
 #---------------------------------------------------------------------------------------------------
-class ShipPlacementLocation( RelativeLayout ): #todo: this should also show status of bombed ships
+class ShipPlacementLocation( Widget ): #todo: this should also show status of bombed ships
     def __init__(self, **kwargs):
         super().__init__(cols=2,**kwargs)
-        self.add_widget( Ship(2) )
-        #self.add_widget( Ship() )
+        self.createShips() #todo move this somewhere else
+
+    def createShips(self):
+        for i in range(1,5):
+            ship = Ship(i)
+            game.ships.append( ship )
+            self.add_widget( ship )
 
 class ShipCount( Widget ):
     def __init__(self, **kwargs):
@@ -173,9 +217,11 @@ class Grid( GridLayout ):
         self.sizeMultiplier = sizeMultiplier
         self.gridConfig = GridConfig(sizeMultiplier=self.sizeMultiplier)
         super().__init__(cols=11)
+        game.mainGrid = self
 
     def addGridElements(self):
         self.gridElements = dict()
+        game.gridElements = self.gridElements
         for rowNr in range(0,11):
             self.gridElements[ rowNr ] = dict()
             for colNr, colCharacter in enumerate(list(' ABCDEFGHIJ')):
@@ -187,14 +233,16 @@ class Grid( GridLayout ):
                     gridElement = GridLabelElement(text=gridLabelElementText, gridConfig = self.gridConfig)
                 else:
                     gridElement = GridBattlefieldElement(gridConfig = self.gridConfig)
+                    self.gridElements[rowNr][colCharacter] = gridElement
                 self.add_widget( gridElement )
+
 
 #---------------------------------------------------------------------------------------------------
 #       Grid Elements
 #---------------------------------------------------------------------------------------------------
 class GridElement( RelativeLayout ):
     def __init__(self, gridConfig, **kwargs):
-        super().__init__(size_hint = (None,None),size=gridConfig.gridElementSize, **kwargs)
+        super().__init__(size_hint = (None,None), size=gridConfig.gridElementSize, **kwargs)
 
 class GridBattlefieldElement( GridElement ):
     def __init__(self, gridConfig, **kwargs):
@@ -202,6 +250,12 @@ class GridBattlefieldElement( GridElement ):
     #this is the coloured area inside the element (that makes it look as a grid):
         elementRectangle = Rectangle( size=gridConfig.battlefieldRectangleSize, pos=[5,5] )
         self.canvas.add( elementRectangle )
+
+    def on_touch_down(self, touch): #this fires on the event that someone clicks on the ship
+        if self.collide_point(*touch.pos):
+            if game.canShipBePlaced(game.selectedShip, self): #todo should i check in game and then do placement in ship ?
+                game.placeShipToGrid(game.selectedShip, self)
+            return True
 
 class GridLabelElement( GridElement ):
     def __init__(self, gridConfig, text='', **kwargs):
@@ -220,7 +274,7 @@ class Screen( Widget ):
     def __init__(self, **kwargs):
         self.config = MainConfig()
         Config.set('graphics', 'width', self.config.windowWidth) #this has to be done before calling super()
-        Config.set('graphics', 'height', self.config.windowHeight) #todo  somekind of config?
+        Config.set('graphics', 'height', self.config.windowHeight)
         super().__init__(**kwargs)
         self.drawMainMenuView()
 
@@ -244,8 +298,8 @@ class BattleshipApp(App):
     screen = None
 
     def build(self):
-        global sessionStatus #FIXME: THIS IS MOST CERTAINLY NOT THE WAY TO DO IT, BUT HOW ELSE ?!?!?
-        sessionStatus = SessionStatus()
+        global game #FIXME: THIS IS MOST CERTAINLY NOT THE WAY TO DO IT, BUT HOW ELSE ?!?!?
+        game = Game()
         self.screen = Screen()
         return self.screen
 
