@@ -342,7 +342,7 @@ class ShipPier( RelativeLayout ):
     def __init__(self, shipLength, **kwargs):
         super().__init__(**kwargs)
         self.add_widget(Label(text = shipLength))
-        #game.shipPort.shipPier[ int(shipLength) ] = []
+        game.shipPort.shipPier[ int(shipLength) ] = []
 
 class ShipCount( RelativeLayout ):
     def __init__(self, shipCount, **kwargs):
