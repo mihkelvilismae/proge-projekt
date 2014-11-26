@@ -13,7 +13,7 @@ from kivy.uix.gridlayout import GridLayout
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.relativelayout import RelativeLayout
 from kivy.uix.stacklayout import StackLayout
-from kivy.properties import StringProperty, ObjectProperty, BooleanProperty
+from kivy.properties import StringProperty, ObjectProperty, BooleanProperty, ListProperty
 import random
 
 #---------------------------------------------------------------------------------------------------
@@ -335,19 +335,38 @@ class ShipPort( GridLayout ): #todo: this should also show status of bombed ship
 
     def draw(self):
         for shipLength in range(1,5):
-            self.add_widget( ShipPier( str(shipLength)) )
-            self.add_widget( ShipCount(str(1)) )
+            shipPier = ShipPier( str(shipLength) )
+            shipCount = ShipCount( shipPier )
+            shipPier.shipCount = shipCount
+            self.add_widget( shipPier )
+            self.add_widget( shipCount )
 
 class ShipPier( RelativeLayout ):
+    shipsInPier = ListProperty([])
+    shipCount = None
     def __init__(self, shipLength, **kwargs):
         super().__init__(**kwargs)
         self.add_widget(Label(text = shipLength))
-        game.shipPort.shipPier[ int(shipLength) ] = []
+        self.bind(shipsInPier=self.on_shipsInPier)
+        #game.shipPort.shipPier[ int(shipLength) ] = []
+
+    def addShip(self, ship):
+        self.add_widget( ship )
+
+    def on_shipsInPier(self):
+        self.shipCount.updateShipCount()
 
 class ShipCount( RelativeLayout ):
-    def __init__(self, shipCount, **kwargs):
+    shipPier = None
+    def __init__(self, shipPier, **kwargs):
+        self.shipPier = shipPier
         super().__init__(**kwargs)
-        self.add_widget(Label(text = shipCount))
+        self.updateShipCount()
+
+    def updateShipCount(self):
+        self.clear_widgets()
+        shipsInPierCount = len(self.shipPier.shipsInPier)
+        self.add_widget(Label(text = str(shipsInPierCount)))
 
 
 #---------------------------------------------------------------------------------------------------
