@@ -68,17 +68,42 @@ class HoverBehavior(): #todo change this from relativeLayout to widget
         Window.bind(mouse_pos=self.on_mouse_pos)
         super(HoverBehavior, self).__init__(**kwargs)
 
+
+    def checkIfMouseIsInWidget(self, mousePoint):
+        widgetGlobalStartPosition = [self.to_window(self.pos[0], self.pos[1])[0], self.to_window(self.pos[0], self.pos[1])[1]]
+        widgetGlobalEndPosition = [widgetGlobalStartPosition[0]+self.width, widgetGlobalStartPosition[1]+self.height]
+        if widgetGlobalStartPosition[0] < mousePoint[0] and mousePoint[0] < widgetGlobalEndPosition[0] and widgetGlobalStartPosition[1] < mousePoint[1] and mousePoint[1] < widgetGlobalEndPosition[1]:
+            return True
+        else:
+            return False
+        #print('------------------')
+        #print(widgetGlobalStartPosition)
+        #print(widgetGlobalEndPosition)
+        #print(mousePoint)
+        #print('------------------')
+        #return True
+
     def on_mouse_pos(self, *args):
-        pos = args[1]
-        inside = self.collide_point(*pos)
+        mousePosition = args[1]
+
+        #inside = self.collide_point(*mousePosition) #- this uses the elements local position
+        inside = self.checkIfMouseIsInWidget(mousePosition) #- this uses the elements global position, which it should
         if self.hovered == inside:
             #We have already done what was needed
             return
-        self.border_point = pos
+        self.border_point = mousePosition
         self.hovered = inside
         if inside:
+            print('SIEENSE:',self)
+            #print('INSIDE: ---------------------------------------------')
+            #print(pos, 'hiire pos')
+            #print(self.pos, 'elementdi pos local')
+            #print([self.to_window(self.pos[0], self.pos[1])[0], self.to_window(self.pos[0], self.pos[1])[1]], 'elementdi pos global')
+            #print('---------------------------------------------')
+            #print(self.to_window(self.pos[0], self.pos[1]),'elementdi pos windows')
             self.dispatch('on_enter')
         else:
+            print('VÖLJUS:',self)
             self.dispatch('on_leave')
 
     def on_enter(self):
@@ -165,9 +190,9 @@ class Game( Widget ):
     def testing(self):
         print('-----------------TESTING START------------------------')
         ship = self.ships[0]
-        print('ship',ship.pos)
+        print('ship', ship.pos, ship.to_window(ship.pos[0],ship.pos[1]))
         for rect in ship.shipRectangles:
-            print('rect',rect.pos)
+            print('rect',rect, rect.pos, rect.to_window(rect.pos[0],rect.pos[1]))
         print('-----------------TESTING END------------------------')
         #ship.pos=(10,10)
         #ship.drawShip()
@@ -345,11 +370,12 @@ class ShipElementRectangle( Widget, HoverBehavior ):
             return True
 
      def on_enter(self):
-         print('ShipElementRectangle',self.pos)
+         print('ShipElementRectangle', self, self.pos, self.to_window(self.pos[0],self.pos[1]))
          #self.draw()
 
      def on_leave(self):
-         print('xxxx')
+         2
+         #print('xxxx')
          #self.draw()
 #---------------------------------------------------------------------------------------------------
 #       @ShipPort
@@ -458,7 +484,8 @@ class Grid( GridLayout ):
 #---------------------------------------------------------------------------------------------------
 #       Grid Elements
 #---------------------------------------------------------------------------------------------------
-class GridElement( RelativeLayout, HoverBehavior ):
+#class GridElement( RelativeLayout, HoverBehavior ):
+class GridElement( RelativeLayout, HoverBehavior):
     def __init__(self, gridConfig, **kwargs):
         super().__init__(size_hint = (None,None), size=gridConfig.gridElementSize, **kwargs)
 
