@@ -119,15 +119,19 @@ class Game( Widget ):
     #    1
 
     def createShips(self):
-        for i in range(1,5):
-            ship = Ship(i)
-            game.ships.append( ship )
+        shipsCountByLength = {1:4, 2:3, 3:2, 4:1}
+        shipsCountByLength = {4:1}
+        for shipLength, shipCount in shipsCountByLength.items():
+            for _ in range(0, shipCount):
+                ship = Ship( shipLength )
+                game.ships.append( ship )
 
     def setupShipsInPort(self):
         for ship in self.ships:
-            2
+            self.placeShipToPort( ship )
 
-    #def placeShipToPort(self):
+    def placeShipToPort(self, ship):
+        self.shipPort.shipPiers[ship.length].addShip( ship )
 
     def canShipBePlaced(self, ship, battlefieldGridElement): #todo implement logic for out of borders etc
         if not isinstance( ship, Ship ):
@@ -135,9 +139,14 @@ class Game( Widget ):
         return True
 
     def placeShipToGrid(self, ship, battlefieldGridElement):
+        if ship.isInPort:
+            ship.isInPort = False
+            ship.shipPier.removeShip( ship )
+            self.mainGrid.add_widget( ship )
+            ship.drawShip()
         ship.shipStatus = ship.STATUS_PLACED
         ship.placeShip( battlefieldGridElement.pos )
-        self.setSelectedShip(ObjectProperty(None))
+        self.setSelectedShip( ObjectProperty(None) )
 
     def canRotateShip(self, ship): #todo implement this
         if not isinstance( ship, Ship ):
@@ -151,6 +160,18 @@ class Game( Widget ):
         for ship in self.ships:
             if ship!=shipNotToUnselect:
                 ship.shipStatus = ship.STATUS_WAITING_TO_BE_PICKED_UP
+
+    # @testing
+    def testing(self):
+        print('-----------------TESTING START------------------------')
+        ship = self.ships[0]
+        print('ship',ship.pos)
+        for rect in ship.shipRectangles:
+            print('rect',rect.pos)
+        print('-----------------TESTING END------------------------')
+        #ship.pos=(10,10)
+        #ship.drawShip()
+
 
 #---------------------------------------------------------------------------------------------------
 #       MainMenuView
@@ -207,10 +228,12 @@ class GameScreenView( BoxLayout ):
 #---------------------------------------------------------------------------------------------------
 #       @Ship
 #---------------------------------------------------------------------------------------------------
-class Ship( Widget ):
+class Ship( Widget, HoverBehavior ):
     STATUS_WAITING_TO_BE_PICKED_UP = 'waitingToBePickedUp'
     STATUS_PLACED = 'placed'
     STATUS_SELECTED = 'selected'
+
+    isInPort = True
 
     DIRECTION_HORIZONTAL = 'H'
     DIRECTION_VERTICAL = 'V'
@@ -220,6 +243,8 @@ class Ship( Widget ):
     color = Color(1,1,0)
     position = (0,0)
     direction = 'H'
+    shipPier = None
+    shipRectangles = []
 
     def __init__(self, length=1, **kwargs):
         self.mainConfig = MainConfig()
@@ -260,11 +285,14 @@ class Ship( Widget ):
         self.drawShip()
 
     def drawShip(self):
+        print('DRAWSHIP')
         self.clear_widgets()
         self.canvas.clear()
         #for i,elementRectangle in zip([Color(0,1,1),Color(1,1,0),Color(0,0,1),Color(1,1,1)], self.createShipElementRectangles()):
+        self.shipRectangles = []
         for elementRectangle in self.createShipElementRectangles():
             self.add_widget(elementRectangle)
+            self.shipRectangles.append( elementRectangle )
 
     def createShipElementRectangles(self):
         shipBlockWidth = self.mainConfig.shipBlockWidth
@@ -298,14 +326,16 @@ class ShipElementRectangle( Widget, HoverBehavior ):
 
      def draw(self):
          self.canvas.clear()
+         print('lisataks recatnge')
          elementRectangle = Rectangle(pos=self.pos, size=self.size)
          self.canvas.add( self.ship.color )
          self.canvas.add( elementRectangle )
+         #self.ship.shipRectangles.append( elementRectangle )
 
 # event bindings:
      def on_touch_down(self, touch): #this fires on the event that someone clicks on the ship
-        ##print('ShipElementRectangle - click')
         if self.collide_point(*touch.pos):
+            print('ShipElementRectangle - click')
             #print('sai pihta')
             #if self.ship.shipStatus == self.ship.STATUS_SELECTED:
                 #if game.canRotateShip( self.ship):
@@ -315,20 +345,20 @@ class ShipElementRectangle( Widget, HoverBehavior ):
             return True
 
      def on_enter(self):
-         print('xxxx')
-         self.draw()
+         print('ShipElementRectangle',self.pos)
+         #self.draw()
 
      def on_leave(self):
          print('xxxx')
-         self.draw()
+         #self.draw()
 #---------------------------------------------------------------------------------------------------
-#       Ship placement location
+#       @ShipPort
 #---------------------------------------------------------------------------------------------------
-class ShipPort( GridLayout ): #todo: this should also show status of bombed ships
-    shipPier = {}
+class ShipPort( BoxLayout ): #todo: this should also show status of bombed ships
+    shipPiers = {}
 
     def __init__(self, **kwargs):
-        super().__init__(cols=2,**kwargs)
+        super().__init__(orientation='vertical', **kwargs)
         #self.createShips() #todo move this somewhere else
         #self.add_widget(Button(text='vajutaaaaaaaaaaaaa'))
         self.draw()
@@ -336,38 +366,43 @@ class ShipPort( GridLayout ): #todo: this should also show status of bombed ship
     def draw(self):
         for shipLength in range(1,5):
             shipPier = ShipPier( str(shipLength) )
-            shipCount = ShipCount( shipPier )
-            shipPier.shipCount = shipCount
+            self.shipPiers[ shipLength ] = shipPier
             self.add_widget( shipPier )
-            self.add_widget( shipCount )
 
 class ShipPier( RelativeLayout ):
     shipsInPier = ListProperty([])
     shipCount = None
+
     def __init__(self, shipLength, **kwargs):
         super().__init__(**kwargs)
-        self.add_widget(Label(text = shipLength))
         self.bind(shipsInPier=self.on_shipsInPier)
         #game.shipPort.shipPier[ int(shipLength) ] = []
+        self.draw()
+
+
+    def draw(self):
+        self.drawShipCount()
+
+    def drawShipCount(self):
+        shipsInPierCount = len(self.shipsInPier)
+        self.shipCount = Label(text = str(shipsInPierCount))
+        self.add_widget( self.shipCount )
 
     def addShip(self, ship):
+        self.shipsInPier.append(ship)
+        ship.shipPier = self
         self.add_widget( ship )
 
-    def on_shipsInPier(self):
-        self.shipCount.updateShipCount()
-
-class ShipCount( RelativeLayout ):
-    shipPier = None
-    def __init__(self, shipPier, **kwargs):
-        self.shipPier = shipPier
-        super().__init__(**kwargs)
-        self.updateShipCount()
+    def removeShip(self, ship):
+        self.shipsInPier.remove( ship )
+        self.remove_widget( ship )
 
     def updateShipCount(self):
-        self.clear_widgets()
-        shipsInPierCount = len(self.shipPier.shipsInPier)
-        self.add_widget(Label(text = str(shipsInPierCount)))
+        self.remove_widget(self.shipCount)
+        self.drawShipCount()
 
+    def on_shipsInPier(self, instance, pos ):
+        self.updateShipCount()
 
 #---------------------------------------------------------------------------------------------------
 #       @Grid
@@ -380,8 +415,15 @@ class Grid( GridLayout ):
     def __init__(self, sizeMultiplier=1 ):
         self.sizeMultiplier = sizeMultiplier
         self.gridConfig = GridConfig(sizeMultiplier=self.sizeMultiplier)
-        super().__init__(cols=11)
+        super().__init__(col_default_width=self.gridConfig.gridElementSize[0], col_force_default=True, cols=11)
         game.mainGrid = self
+
+    def addTestingButton(self):
+        button = Button(text='XXX',size=(100,50),size_hint=(None,None), pos_hint= { 'center_x' : 0.5 })
+        def testing(obj):
+            game.testing()
+        button.bind( on_press=testing)
+        self.add_widget(button)
 
     def addGridElements(self):
 
@@ -390,6 +432,10 @@ class Grid( GridLayout ):
         for rowNr in range(0,11):
             self.gridElements[ rowNr ] = dict()
             for colNr, colCharacter in enumerate(list(' ABCDEFGHIJ')):
+                if rowNr==0 and colNr==0:
+                    self.addTestingButton()
+                    continue
+
                 if 1 and (rowNr==0 or colNr==0):
                     if rowNr==0:
                         gridLabelElementText = colCharacter
@@ -401,6 +447,8 @@ class Grid( GridLayout ):
                     self.gridElements[rowNr][colCharacter] = gridElement
                 self.add_widget( gridElement )
                 gridElement.draw()
+
+
 
     def calculcateGridElementPosition(self, rowNr, colNr):
         position = (self.gridConfig.battlefieldRectangleSize[0] * rowNr, self.gridConfig.battlefieldRectangleSize[1] * colNr)

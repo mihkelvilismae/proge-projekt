@@ -12,7 +12,7 @@ from kivy.uix.button import Button
 from kivy.graphics import Color
 from kivy.graphics import *
  
-class RootWidget(BoxLayout):
+class RootWidget(Widget):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.run()
@@ -21,40 +21,31 @@ class RootWidget(BoxLayout):
         gridLayout = GridLayoutWidget()
         self.add_widget( gridLayout )
         gridLayout.addChildren()
-
-        gridLayout = GridLayoutWidget()
-        self.add_widget( gridLayout )
-        gridLayout.addChildren()
-
+ 
  
 class GridLayoutWidget( GridLayout ):
     def __init__(self, **kwargs):
-        super().__init__(cols=1,**kwargs)
+        super().__init__(cols=3,**kwargs)
  
     def addChildren(self):
         for i in range(0,3):
             child = Child( i )
             self.add_widget( child )
             child.draw()
-            print('How can I get the absolute position of the child here ?')
-            print("And how can I get the Child widget's position relative to the position of its parent, the GridLayoutWidget?")
-            print(child.pos) #this only gives me [0,0]
  
-class Child( BoxLayout ):
+    #def addChildrenAlternative(self):
+    #    for i in range(0,3):
+    #        btn = Button(text=str(i))
+    #        self.add_widget( btn )
+ 
+ 
+class Child( Widget ):
     def __init__(self, text, **kwargs):
         super().__init__(**kwargs)
         self.text = str(text)
  
     def draw(self):
-        btn = Button(text=self.text)
-        self.add_widget( btn )
-        def xxx(self):
-            print(self.pos)
-            print(self.to_local(self.x, self.y))
-            print(self.to_window(self.x, self.y))
-            print(self.to_window(self.x, self.y))
-        btn.bind( on_press=xxx)
-
+        self.add_widget( Button(text=self.text) )
  
  
 class TestApp(App):
