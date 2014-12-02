@@ -1,0 +1,3 @@
+- asjade korrektne importimine
+- viitamine game objektile läbi terve rakenduse
+-

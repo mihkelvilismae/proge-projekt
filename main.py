@@ -185,14 +185,7 @@ class Game( Widget ):
     # @testing
     def testing(self):
         print('-----------------TESTING START------------------------')
-        xxx = game.shipPort
-        print('shipport', xxx.pos, xxx.to_window(xxx.pos[0],xxx.pos[1]))
-        xxx = xxx.parent
-        print('parent', xxx)
-        print('parent', xxx.pos, xxx.to_window(xxx.pos[0],xxx.pos[1]))
-        print('parent', xxx.size)
-        #for rect in ship.shipRectangles:
-        #    print('rect',rect, rect.pos, rect.to_window(rect.pos[0],rect.pos[1]))
+        print(self.mainGrid.get_root_window().children[0])
         print('-----------------TESTING END------------------------')
 
 #---------------------------------------------------------------------------------------------------
