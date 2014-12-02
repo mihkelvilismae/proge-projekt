@@ -177,7 +177,6 @@ class Game( Widget ):
     # @testing
     def testing(self):
         print('-----------------TESTING START------------------------')
-        print(self.ships)
         ship = self.ships[0]
         print('ship', ship.pos, ship.to_window(ship.pos[0],ship.pos[1]))
         for rect in ship.shipRectangles:
