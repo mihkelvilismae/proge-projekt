@@ -113,6 +113,7 @@ class Game( Widget ):
     screen = None
     mainGrid = None
     shipPort = None
+    battleArea = None
 
     def startGame(self):
         self.screen.drawGameScreenView()
@@ -133,7 +134,7 @@ class Game( Widget ):
 
     def createShips(self):
         shipsCountByLength = {1:4, 2:3, 3:2, 4:1}
-        shipsCountByLength = {4:1}
+        #shipsCountByLength = {4:1}
         for shipLength, shipCount in shipsCountByLength.items():
             for _ in range(0, shipCount):
                 ship = Ship( shipLength )
@@ -155,7 +156,7 @@ class Game( Widget ):
         if ship.isInPort:
             ship.isInPort = False
             ship.shipPier.removeShip( ship )
-            self.mainGrid.add_widget( ship )
+            self.battleArea.add_widget( ship )
             ship.drawShip()
         ship.shipStatus = ship.STATUS_PLACED
         ship.placeShip( battlefieldGridElement.pos )
@@ -180,8 +181,9 @@ class Game( Widget ):
         print(self.ships)
         ship = self.ships[0]
         print('ship', ship.pos, ship.to_window(ship.pos[0],ship.pos[1]))
-        for rect in ship.shipRectangles:
-            print('rect',rect, rect.pos, rect.to_window(rect.pos[0],rect.pos[1]))
+        print('shippartnet',ship.parent)
+        #for rect in ship.shipRectangles:
+        #    print('rect',rect, rect.pos, rect.to_window(rect.pos[0],rect.pos[1]))
         print('-----------------TESTING END------------------------')
 
 #---------------------------------------------------------------------------------------------------
@@ -215,16 +217,31 @@ class GameScreenView( BoxLayout ):
         #self.size_hint = (1,1)
         #self.size = (900,600)
 
+    def addWidgetToGameScreenView(self, widgetToAdd):
+        self.add_widget( widgetToAdd )
 
     def draw(self):
         self.size = self.parent.size
-        self.drawMainGrid()
-        #self.drawSmallerGrid()
+        self.drawBattleArea()
         self.drawShipPort()
+
+    def drawBattleArea(self):
+        game.battleArea = BattleArea()
+        self.addWidgetToGameScreenView( game.battleArea )
+        game.battleArea.draw()
 
     def drawShipPort(self):
         game.shipPort = ShipPort()
-        self.add_widget( game.shipPort )
+        self.addWidgetToGameScreenView( game.shipPort )
+
+
+class BattleArea( RelativeLayout ):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        game.battleArea = self
+
+    def draw(self):
+        self.drawMainGrid()
 
     def drawSmallerGrid(self): #todo: can be joined with drawMainGrid()?
         self.smallerGrid = Grid(sizeMultiplier=2)
