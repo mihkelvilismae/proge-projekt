@@ -87,7 +87,7 @@ class Game( Widget ):
     # @testing
     def testing(self):
         print('-----------------TESTING START------------------------')
-        xxx = game.shipPort
+        xxx = self.shipPort
         print('shipport', xxx.pos, xxx.to_window(xxx.pos[0],xxx.pos[1]))
         xxx = xxx.parent
         print('parent', xxx)

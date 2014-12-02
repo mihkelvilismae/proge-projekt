@@ -22,6 +22,7 @@ import random
 #       @Grid
 #---------------------------------------------------------------------------------------------------
 class Grid( GridLayout ):
+    game = None
     sizeMultiplier = 1
     gridElements = dict()
     gridConfig = None
@@ -34,8 +35,9 @@ class Grid( GridLayout ):
 
     def addTestingButton(self):
         button = Button(text='XXX',size=(100,50),size_hint=(None,None), pos_hint= { 'center_x' : 0.5 })
+        self.game = self.get_root_window().children[0].game
         def testing(obj):
-            game.testing()
+            self.game.testing()
         button.bind( on_press=testing)
         self.add_widget(button)
 
