@@ -113,6 +113,7 @@ class Game( Widget ):
     screen = None
     mainGrid = None
     shipPort = None
+    battleArea = None
 
     def startGame(self):
         self.screen.drawGameScreenView()
@@ -133,7 +134,7 @@ class Game( Widget ):
 
     def createShips(self):
         shipsCountByLength = {1:4, 2:3, 3:2, 4:1}
-        shipsCountByLength = {4:1}
+        #shipsCountByLength = {4:1}
         for shipLength, shipCount in shipsCountByLength.items():
             for _ in range(0, shipCount):
                 ship = Ship( shipLength )
@@ -155,7 +156,7 @@ class Game( Widget ):
         if ship.isInPort:
             ship.isInPort = False
             ship.shipPier.removeShip( ship )
-            self.mainGrid.add_widget( ship )
+            self.battleArea.add_widget( ship )
             ship.drawShip()
         ship.shipStatus = ship.STATUS_PLACED
         ship.placeShip( battlefieldGridElement.pos )
@@ -169,6 +170,13 @@ class Game( Widget ):
     def rotateShip(self, ship):
         ship.rotateShip()
 
+    def canGridBeBombarded(self, gridElement):
+        return True
+
+    def bombardGrid(self, gridElement):
+        print('bombardGrid toimus')
+        print(gridElement)
+
     def unselectShips(self, shipNotToUnselect=None):
         for ship in self.ships:
             if ship!=shipNotToUnselect:
@@ -177,10 +185,14 @@ class Game( Widget ):
     # @testing
     def testing(self):
         print('-----------------TESTING START------------------------')
-        ship = self.ships[0]
-        print('ship', ship.pos, ship.to_window(ship.pos[0],ship.pos[1]))
-        for rect in ship.shipRectangles:
-            print('rect',rect, rect.pos, rect.to_window(rect.pos[0],rect.pos[1]))
+        xxx = game.shipPort
+        print('shipport', xxx.pos, xxx.to_window(xxx.pos[0],xxx.pos[1]))
+        xxx = xxx.parent
+        print('parent', xxx)
+        print('parent', xxx.pos, xxx.to_window(xxx.pos[0],xxx.pos[1]))
+        print('parent', xxx.size)
+        #for rect in ship.shipRectangles:
+        #    print('rect',rect, rect.pos, rect.to_window(rect.pos[0],rect.pos[1]))
         print('-----------------TESTING END------------------------')
 
 #---------------------------------------------------------------------------------------------------
@@ -214,16 +226,31 @@ class GameScreenView( BoxLayout ):
         #self.size_hint = (1,1)
         #self.size = (900,600)
 
+    def addWidgetToGameScreenView(self, widgetToAdd):
+        self.add_widget( widgetToAdd )
 
     def draw(self):
         self.size = self.parent.size
-        self.drawMainGrid()
-        #self.drawSmallerGrid()
+        self.drawBattleArea()
         self.drawShipPort()
+
+    def drawBattleArea(self):
+        game.battleArea = BattleArea()
+        self.addWidgetToGameScreenView( game.battleArea )
+        game.battleArea.draw()
 
     def drawShipPort(self):
         game.shipPort = ShipPort()
-        self.add_widget( game.shipPort )
+        self.addWidgetToGameScreenView( game.shipPort )
+
+
+class BattleArea( RelativeLayout ):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        game.battleArea = self
+
+    def draw(self):
+        self.drawMainGrid()
 
     def drawSmallerGrid(self): #todo: can be joined with drawMainGrid()?
         self.smallerGrid = Grid(sizeMultiplier=2)
@@ -321,6 +348,8 @@ class Ship( Widget, HoverBehavior ):
 
     #def bombardShipPart(self):
     1
+    def bombardGridxxx(self):
+        print('bombardGrid toimus')
 
     def calculateShipSize(self, shipLength):
         return (self.mainConfig.shipBlockWidth * shipLength, self.mainConfig.shipBlockHeight)
@@ -383,19 +412,22 @@ class ShipPier( RelativeLayout ):
     shipCount = None
 
     def __init__(self, shipLength, **kwargs):
-        super().__init__(**kwargs)
+        super().__init__(size=(300, 100), size_hint=(None, None), **kwargs)
         self.bind(shipsInPier=self.on_shipsInPier)
         #game.shipPort.shipPier[ int(shipLength) ] = []
         self.draw()
 
+    def getShipCountInPier(self):
+        return len(self.shipsInPier)
 
     def draw(self):
         self.drawShipCount()
 
     def drawShipCount(self):
-        shipsInPierCount = len(self.shipsInPier)
-        self.shipCount = Label(text = str(shipsInPierCount))
+        shipsInPierCount = self.getShipCountInPier()
+        self.shipCount = Label( font_size='40sp', text = str(shipsInPierCount)) #todo put font size in conf
         self.add_widget( self.shipCount )
+        self.shipCount.x = 200 #fixme: this works, but the backend part isnt beautiful
 
     def addShip(self, ship):
         self.shipsInPier.append(ship)
@@ -411,7 +443,10 @@ class ShipPier( RelativeLayout ):
         self.drawShipCount()
 
     def on_shipsInPier(self, instance, pos ):
-        self.updateShipCount()
+        if self.getShipCountInPier()==0:
+            self.parent.remove_widget(self)
+        else:
+            self.updateShipCount()
 
 #---------------------------------------------------------------------------------------------------
 #       @Grid
@@ -467,8 +502,8 @@ class Grid( GridLayout ):
 #---------------------------------------------------------------------------------------------------
 #       Grid Elements
 #---------------------------------------------------------------------------------------------------
-#class GridElement( RelativeLayout, HoverBehavior ):
-class GridElement( RelativeLayout):
+#class GridElement( RelativeLayout):
+class GridElement( RelativeLayout, HoverBehavior ):
     def __init__(self, gridConfig, **kwargs):
         super().__init__(size_hint = (None,None), size=gridConfig.gridElementSize, **kwargs)
 
@@ -510,12 +545,13 @@ class GridBattlefieldElement( GridElement ):
         return (self.pos[0]+5, self.pos[1]+5)
 
 # EVENT BINDINGS (start):
-    def on_touch_down(self, touch): #this fires on the event that someone clicks on the ship
+    def on_touch_down(self, touch): #this fires on the event that someone clicks on the grid
         #print'GridBattlefieldElement - click')
         if self.collide_point(*touch.pos):
-            #print'sai pihta')
             if game.canShipBePlaced(game.selectedShip, self): #todo should i check in game and then do placement in ship ?
                 game.placeShipToGrid(game.selectedShip, self)
+            elif game.canGridBeBombarded( self ):
+                game.bombardGrid(self)
             return True
 
     def on_enter(self):

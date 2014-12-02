@@ -170,6 +170,13 @@ class Game( Widget ):
     def rotateShip(self, ship):
         ship.rotateShip()
 
+    def canGridBeBombarded(self, gridElement):
+        return True
+
+    def bombardGrid(self, gridElement):
+        print('bombardGrid toimus')
+        print(gridElement)
+
     def unselectShips(self, shipNotToUnselect=None):
         for ship in self.ships:
             if ship!=shipNotToUnselect:
@@ -341,6 +348,8 @@ class Ship( Widget, HoverBehavior ):
 
     #def bombardShipPart(self):
     1
+    def bombardGridxxx(self):
+        print('bombardGrid toimus')
 
     def calculateShipSize(self, shipLength):
         return (self.mainConfig.shipBlockWidth * shipLength, self.mainConfig.shipBlockHeight)
@@ -418,7 +427,7 @@ class ShipPier( RelativeLayout ):
         shipsInPierCount = self.getShipCountInPier()
         self.shipCount = Label( font_size='40sp', text = str(shipsInPierCount)) #todo put font size in conf
         self.add_widget( self.shipCount )
-        self.shipCount.x = 200
+        self.shipCount.x = 200 #fixme: this works, but the backend part isnt beautiful
 
     def addShip(self, ship):
         self.shipsInPier.append(ship)
@@ -536,12 +545,13 @@ class GridBattlefieldElement( GridElement ):
         return (self.pos[0]+5, self.pos[1]+5)
 
 # EVENT BINDINGS (start):
-    def on_touch_down(self, touch): #this fires on the event that someone clicks on the ship
+    def on_touch_down(self, touch): #this fires on the event that someone clicks on the grid
         #print'GridBattlefieldElement - click')
         if self.collide_point(*touch.pos):
-            #print'sai pihta')
             if game.canShipBePlaced(game.selectedShip, self): #todo should i check in game and then do placement in ship ?
                 game.placeShipToGrid(game.selectedShip, self)
+            elif game.canGridBeBombarded( self ):
+                game.bombardGrid(self)
             return True
 
     def on_enter(self):
