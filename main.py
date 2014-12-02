@@ -178,10 +178,12 @@ class Game( Widget ):
     # @testing
     def testing(self):
         print('-----------------TESTING START------------------------')
-        print(self.ships)
-        ship = self.ships[0]
-        print('ship', ship.pos, ship.to_window(ship.pos[0],ship.pos[1]))
-        print('shippartnet',ship.parent)
+        xxx = game.shipPort
+        print('shipport', xxx.pos, xxx.to_window(xxx.pos[0],xxx.pos[1]))
+        xxx = xxx.parent
+        print('parent', xxx)
+        print('parent', xxx.pos, xxx.to_window(xxx.pos[0],xxx.pos[1]))
+        print('parent', xxx.size)
         #for rect in ship.shipRectangles:
         #    print('rect',rect, rect.pos, rect.to_window(rect.pos[0],rect.pos[1]))
         print('-----------------TESTING END------------------------')
@@ -401,19 +403,22 @@ class ShipPier( RelativeLayout ):
     shipCount = None
 
     def __init__(self, shipLength, **kwargs):
-        super().__init__(**kwargs)
+        super().__init__(size=(300, 100), size_hint=(None, None), **kwargs)
         self.bind(shipsInPier=self.on_shipsInPier)
         #game.shipPort.shipPier[ int(shipLength) ] = []
         self.draw()
 
+    def getShipCountInPier(self):
+        return len(self.shipsInPier)
 
     def draw(self):
         self.drawShipCount()
 
     def drawShipCount(self):
-        shipsInPierCount = len(self.shipsInPier)
-        self.shipCount = Label(text = str(shipsInPierCount))
+        shipsInPierCount = self.getShipCountInPier()
+        self.shipCount = Label( font_size='40sp', text = str(shipsInPierCount)) #todo put font size in conf
         self.add_widget( self.shipCount )
+        self.shipCount.x = 200
 
     def addShip(self, ship):
         self.shipsInPier.append(ship)
@@ -429,7 +434,10 @@ class ShipPier( RelativeLayout ):
         self.drawShipCount()
 
     def on_shipsInPier(self, instance, pos ):
-        self.updateShipCount()
+        if self.getShipCountInPier()==0:
+            self.parent.remove_widget(self)
+        else:
+            self.updateShipCount()
 
 #---------------------------------------------------------------------------------------------------
 #       @Grid
@@ -485,8 +493,8 @@ class Grid( GridLayout ):
 #---------------------------------------------------------------------------------------------------
 #       Grid Elements
 #---------------------------------------------------------------------------------------------------
-#class GridElement( RelativeLayout, HoverBehavior ):
-class GridElement( RelativeLayout):
+#class GridElement( RelativeLayout):
+class GridElement( RelativeLayout, HoverBehavior ):
     def __init__(self, gridConfig, **kwargs):
         super().__init__(size_hint = (None,None), size=gridConfig.gridElementSize, **kwargs)
 
