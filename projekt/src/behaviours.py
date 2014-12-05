@@ -69,7 +69,7 @@ class HoverBehavior():
             self.dispatch('on_leave')
 
     def on_enter(self):
-        #print'onente')
+        #print('onente', self)
         pass
 
     def on_leave(self):

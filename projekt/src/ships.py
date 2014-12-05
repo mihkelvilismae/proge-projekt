@@ -2,6 +2,7 @@ __author__ = 'mihkel'
 
 from .behaviours import HoverBehavior
 from .gameconfig import MainConfig
+from .shipzone import ShipZone
 
 from kivy.app import App
 from kivy.uix.widget import Widget
@@ -14,6 +15,7 @@ from kivy.core.text import Label as CoreLabel
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.relativelayout import RelativeLayout
+from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.stacklayout import StackLayout
 from kivy.properties import StringProperty, ObjectProperty, BooleanProperty, ListProperty
 import random
@@ -21,7 +23,7 @@ import random
 #---------------------------------------------------------------------------------------------------
 #       @Ship
 #---------------------------------------------------------------------------------------------------
-class Ship( Widget, HoverBehavior ):
+class Ship( FloatLayout, HoverBehavior ):
     STATUS_WAITING_TO_BE_PICKED_UP = 'waitingToBePickedUp'
     STATUS_PLACED = 'placed'
     STATUS_SELECTED = 'selected'
@@ -38,6 +40,7 @@ class Ship( Widget, HoverBehavior ):
     direction = 'H'
     shipPier = None
     shipRectangles = []
+    shipZone = None
 
     def __init__(self, length=1, **kwargs):
         self.mainConfig = MainConfig()
@@ -45,6 +48,7 @@ class Ship( Widget, HoverBehavior ):
         self.length = length
         self.drawShip()
         self.bind(shipStatus=self.on_status)
+
 
 # EVENT BINDINGS (start):
     def on_status(self, instance, pos): #this fires when the status changes
@@ -59,9 +63,15 @@ class Ship( Widget, HoverBehavior ):
 
         self.drawShip()
 
+    def addZone(self):
+        self.shipZone = ShipZone( self )
+        self.add_widget(self.shipZone)
+        self.shipZone.draw()
+        self.shipZone.zoneStatus = ShipZone.STATUS_GREEN
+
+
     def on_touch_down(self, touch): #this fires on the event that someone clicks on the ship
         return super(Ship, self).on_touch_down(touch) #propagates to children ,        http://kivy.org/docs/guide/events.html#trigger-events -  search: 'At Line 5:'
-
 
 # EVENT BINDINGS (end)
 
@@ -81,7 +91,7 @@ class Ship( Widget, HoverBehavior ):
         self.clear_widgets()
         self.canvas.clear()
         #for i,elementRectangle in zip([Color(0,1,1),Color(1,1,0),Color(0,0,1),Color(1,1,1)], self.createShipElementRectangles()):
-        for shipRectToRemove in self.shipRectangles.copy():
+        for shipRectToRemove in self.shipRectangles.copy(): #FIXME: SHIPRECTANGLES STAY IN LOWER-LEFT PART OF CANVAS AND DONT DISAPPEAR
             self.remove_widget( shipRectToRemove )
             self.shipRectangles.remove(shipRectToRemove)
         for elementRectangle in self.createShipElementRectangles():
@@ -110,6 +120,9 @@ class Ship( Widget, HoverBehavior ):
     def calculateShipSize(self, shipLength):
         return (self.mainConfig.shipBlockWidth * shipLength, self.mainConfig.shipBlockHeight)
 
+#---------------------------------------------------------------------------------------------------------------
+#   ShipElementRectangle
+#---------------------------------------------------------------------------------------------------------------
 class ShipElementRectangle( Widget, HoverBehavior ):
      ship = None
      color = Color()

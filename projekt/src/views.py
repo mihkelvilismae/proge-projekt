@@ -43,9 +43,10 @@ class MainMenuView( Widget ):
 #---------------------------------------------------------------------------------------------------
 class GameScreenView( BoxLayout ):
     game = None
-    shipPort = None
-    smallerGrid = None
-    mainGrid = None
+    #shipPort = None
+    #smallerGrid = None
+    #mainGrid = None
+    startingButton = None
 
     def __init__(self, **kwargs):
         super().__init__(cols=2,**kwargs)
@@ -62,15 +63,23 @@ class GameScreenView( BoxLayout ):
     def addWidgetToGameScreenView(self, widgetToAdd):
         self.add_widget( widgetToAdd )
 
-
     def drawBattleArea(self):
         self.game.battleArea = BattleArea()
         self.addWidgetToGameScreenView( self.game.battleArea )
         self.game.battleArea.draw()
 
     def drawShipPort(self):
-        self.game.shipPort = ShipPort()
+        self.game.shipPort = ShipPort(game=self.game)
         self.addWidgetToGameScreenView( self.game.shipPort )
+        self.game.shipPort.draw()
+
+    def drawStartingButton(self):
+        self.startingButton = Button(text='ALUSTA MÄNGU!')
+        self.startingButton.bind(on_press=self.game.startBattle)
+        self.addWidgetToGameScreenView( self.startingButton )
+
+    def removeShipPort(self):
+        self.remove_widget( self.game.shipPort )
 
 #---------------------------------------------------------------------------------------------------
 #       BattleArea

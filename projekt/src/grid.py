@@ -83,6 +83,7 @@ class GridBattlefieldElement( GridElement ):
     game = None
     rowCoordinate = None
     columnCoordinate = None
+    isBombed = False
 
     def __init__(self, gridConfig, rowCoordinate, columnCoordinate, **kwargs):
         self.rowCoordinate = rowCoordinate
@@ -106,6 +107,16 @@ class GridBattlefieldElement( GridElement ):
 
     def calculateElementRectanglePosition(self):
         return (self.pos[0]+5, self.pos[1]+5)
+
+    def bombard(self):
+        #elementRectangle = Rectangle( pos_hint=(None,None), size=self.gridConfig.battlefieldRectangleSize, pos=self.calculateElementRectanglePosition() )
+        print(self.calculateElementRectanglePosition())
+        #line = Line(points=[0,50], width=10)
+        #self.canvas.add(Color(50,50,50))
+        #self.canvas.add( line )
+        self.isBombed = True
+        self.canvas.clear()
+        print('ement boboblbl')
 
 # EVENT BINDINGS (start):
     def on_touch_down(self, touch): #this fires on the event that someone clicks on the grid

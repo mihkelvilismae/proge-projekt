@@ -15,15 +15,19 @@ class Game( Widget ):
     mainGrid = None
     shipPort = None
     battleArea = None
+    allShipsOnGrid = BooleanProperty(False)
+    gameState = None
+
+    def __init__(self, **kwargs):
+        self.bind(allShipsOnGrid=self.onAllShipsOnGrid)
 
     def startGame(self):
         self.screen.drawGameScreenView()
         self.createShips()
         self.setupShipsInPort()
 
-    def __init__(self, **kwargs):
-        1
-        #self.bind(selectedShip=self.onSelectedShipChange)
+    def startBattle(self, instance):
+        print('startBattle')
 
     def setSelectedShip(self, ship):
         self.unselectShips( ship )
@@ -34,8 +38,8 @@ class Game( Widget ):
     #    1
 
     def createShips(self):
+        shipsCountByLength = {4:1}
         shipsCountByLength = {1:4, 2:3, 3:2, 4:1}
-        #shipsCountByLength = {4:1}
         for shipLength, shipCount in shipsCountByLength.items():
             for _ in range(0, shipCount):
                 ship = Ship( shipLength )
@@ -73,10 +77,12 @@ class Game( Widget ):
         ship.rotateShip()
 
     def canGridBeBombarded(self, gridElement):
-        return True
+        if gridElement.isBombed == False:
+            return True
 
     def bombardGrid(self, gridElement):
         print('bombardGrid toimus')
+        gridElement.bombard()
         print(gridElement)
 
     def unselectShips(self, shipNotToUnselect=None):
@@ -84,15 +90,18 @@ class Game( Widget ):
             if ship!=shipNotToUnselect:
                 ship.shipStatus = ship.STATUS_WAITING_TO_BE_PICKED_UP
 
+    def onAllShipsOnGrid(self, instance, pos):
+        self.screen.gameScreenView.drawStartingButton()
+        self.screen.gameScreenView.removeShipPort()
+        print('allshipsongrid')
+
     # @testing
     def testing(self):
         print('-----------------TESTING START------------------------')
-        xxx = self.shipPort
-        print('shipport', xxx.pos, xxx.to_window(xxx.pos[0],xxx.pos[1]))
-        xxx = xxx.parent
-        print('parent', xxx)
-        print('parent', xxx.pos, xxx.to_window(xxx.pos[0],xxx.pos[1]))
-        print('parent', xxx.size)
+        print(self.shipPort.shipsInPort)
+        for ship in self.ships:
+            ship.addZone()
+            ship.shipZone.draw()
         #for rect in ship.shipRectangles:
         #    print('rect',rect, rect.pos, rect.to_window(rect.pos[0],rect.pos[1]))
         print('-----------------TESTING END------------------------')

@@ -19,34 +19,48 @@ import random
 #---------------------------------------------------------------------------------------------------
 class ShipPort( BoxLayout ): #todo: this should also show status of bombed ships
     shipPiers = {}
+    shipsInPort = ListProperty([])
+    game = None
 
-    def __init__(self, **kwargs):
+    def __init__(self, game, **kwargs):
+        self.game = game
         super().__init__(orientation='vertical', **kwargs)
         #self.createShips() #todo move this somewhere else
         #self.add_widget(Button(text='vajutaaaaaaaaaaaaa'))
-        self.draw()
+        self.bind(shipsInPort=self.onShipsInPort)
+
 
     def draw(self):
         for shipLength in range(1,5):
-            shipPier = ShipPier( str(shipLength) )
+            shipPier = ShipPier( game=self.game )
             self.shipPiers[ shipLength ] = shipPier
             self.add_widget( shipPier )
+            shipPier.draw()
 
+    def onShipsInPort(self, instance, pos):
+        print( len(self.shipsInPort) )
+        if len(self.shipsInPort)==0:
+            self.game.allShipsOnGrid = True
+
+#---------------------------------------------------------------------------------------------------
+#       @ShipPier
+#---------------------------------------------------------------------------------------------------
 class ShipPier( RelativeLayout ):
     shipsInPier = ListProperty([])
     shipCount = None
+    game = None
 
-    def __init__(self, shipLength, **kwargs):
+    def __init__(self, game, **kwargs):
+        self.game = game
         super().__init__(size=(300, 100), size_hint=(None, None), **kwargs)
         self.bind(shipsInPier=self.on_shipsInPier)
         #game.shipPort.shipPier[ int(shipLength) ] = []
-        self.draw()
-
-    def getShipCountInPier(self):
-        return len(self.shipsInPier)
 
     def draw(self):
         self.drawShipCount()
+
+    def getShipCountInPier(self):
+        return len(self.shipsInPier)
 
     def drawShipCount(self):
         shipsInPierCount = self.getShipCountInPier()
@@ -55,11 +69,13 @@ class ShipPier( RelativeLayout ):
         self.shipCount.x = 200 #fixme: this works, but the backend part isnt beautiful
 
     def addShip(self, ship):
-        self.shipsInPier.append(ship)
         ship.shipPier = self
+        self.game.shipPort.shipsInPort.append( ship )
+        self.shipsInPier.append(ship)
         self.add_widget( ship )
 
     def removeShip(self, ship):
+        self.game.shipPort.shipsInPort.remove( ship )
         self.shipsInPier.remove( ship )
         self.remove_widget( ship )
 
