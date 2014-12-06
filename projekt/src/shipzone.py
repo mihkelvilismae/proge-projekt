@@ -26,9 +26,7 @@ class ShipZone( RelativeLayout, HoverBehavior, ParentFinder ):
 
     zoneStatus = StringProperty( STATUS_NOT_VISIBLE )
     def __init__(self, ship, **kwargs):
-        #self.game = game
         super().__init__(size_hint=(None,None), size=(50,50), **kwargs)
-        #super().__init__(**kwargs)
         self.ship = ship
         self.bind(zoneStatus=self.on_zoneStatus)
 
@@ -36,16 +34,19 @@ class ShipZone( RelativeLayout, HoverBehavior, ParentFinder ):
         self.clear_widgets()
         self.canvas.clear()
         self.pos=(-50, -50)
-
+        print('------------------------------------------------------')
+        print('------------------------------------------------------')
+        print('------------------------------------------------------')
+        print('------------------------------------------------------')
+        print(self.ship.getGrid(), 'window pos: ',self.ship.getGrid().to_window(self.ship.getGrid().x, self.ship.getGrid().y), 'size:', self.ship.getGrid().size)
         for shipZoneElement in self.createShipZoneElements():
+            print('------------------------------------------------------')
             self.add_widget( shipZoneElement )
             shipZoneElement.draw()
-
-        #elementRectangle = Rectangle(pos=self.pos, size=self.size)
-        #elementRectangle = Rectangle(size=self.size)
-        #print(elementRectangle)
-        #self.canvas.add(Color(0,1,1))
-        #self.canvas.add(elementRectangle)
+            if self.ship.getGrid().isElementInGridBounds( shipZoneElement ):
+                pass
+            else:
+                self.remove_widget( shipZoneElement )
 
     def createShipZoneElements(self):
         shipZoneElements = []
@@ -80,7 +81,10 @@ class ShipZone( RelativeLayout, HoverBehavior, ParentFinder ):
 #---------------------------------------------------------------------------------------------------------------
 class ShipZoneElement( Widget, ParentFinder):
     shipzone = None
+    xMultiplier = int
+    yMultiplier = int
     game = None
+
     def __init__(self, shipZone, xMultiplier, yMultiplier, **kwargs):
         super().__init__(**kwargs)
         self.xMultiplier = xMultiplier

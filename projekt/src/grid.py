@@ -30,18 +30,35 @@ class Grid( GridLayout, ParentFinder):
     gridElements = dict()
     gridConfig = None
     gameState = None
+    colWidth = 0
+    rowHeight = 0
 
     def __init__(self, sizeMultiplier=1 ):
         self.gameState=GameState( self )
         self.sizeMultiplier = sizeMultiplier
         self.gridConfig = GridConfig(sizeMultiplier=self.sizeMultiplier)
-        super().__init__(col_default_width=self.gridConfig.gridElementSize[0], col_force_default=True, cols=11)
+        super().__init__(col_default_width=self.gridConfig.gridElementSize[0], col_force_default=True, row_default_height=self.gridConfig.gridElementSize[1], row_force_default=True, cols=11)
+        self.colWidth = self.gridConfig.gridElementSize[0]
+        self.rowHeight = self.gridConfig.gridElementSize[1]
         #game.mainGrid = self
 
     def draw(self):
         self.getGame().testingMainGrid = self
         self.addGridElements()
         self.gameState.createGameStateMatrix()
+
+    def isElementInGridBounds(self, elementToCheck):
+        elementToCheckX = elementToCheck.to_window(elementToCheck.x, elementToCheck.y)[0]
+        elementToCheckY = elementToCheck.to_window(elementToCheck.x, elementToCheck.y)[1]
+        gridBottomY = self.to_widget(self.x, self.y)[1]+100
+        gridTopY = 11*self.rowHeight
+
+        if elementToCheckY < gridBottomY or elementToCheckY>gridTopY or elementToCheckX < self.x+50 or 11*self.colWidth < elementToCheckX:
+            print('ei ole sees')
+            return False
+        else:
+            print('on sees')
+            return True
 
     def addTestingButton(self):
         button = Button(text='XXX',size=(100,50),size_hint=(None,None), pos_hint= { 'center_x' : 0.5 })
@@ -120,6 +137,7 @@ class GridBattlefieldElement( GridElement ):
         #self.canvas.add( line )
         self.isBombed = True
         self.canvas.clear()
+
 
 # EVENT BINDINGS (start):
     def on_touch_down(self, touch): #this fires on the event that someone clicks on the grid

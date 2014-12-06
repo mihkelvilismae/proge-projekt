@@ -5,8 +5,9 @@ from .gameconfig import MainConfig
 from .shipzone import ShipZone
 from .parentFinder import ParentFinder
 from .grid import Grid
+from .views import BattleArea
 
-
+from kivy.clock import Clock
 from kivy.app import App
 from kivy.uix.widget import Widget
 from kivy.uix.label import Label
@@ -26,7 +27,7 @@ import random
 #---------------------------------------------------------------------------------------------------
 #       @Ship
 #---------------------------------------------------------------------------------------------------
-class Ship( RelativeLayout, HoverBehavior ):
+class Ship( RelativeLayout, HoverBehavior, ParentFinder ):
     STATUS_WAITING_TO_BE_PICKED_UP = 'waitingToBePickedUp'
     STATUS_PLACED = 'placed'
     STATUS_SELECTED = 'selected'
@@ -63,6 +64,9 @@ class Ship( RelativeLayout, HoverBehavior ):
             self.add_widget(elementRectangle)
             self.shipRectangles.append( elementRectangle )
 
+    def getGrid(self):
+        return self.getParentByClass( BattleArea ).mainGrid
+
 # EVENT BINDINGS (start):
     def on_status(self, instance, pos): #this fires when the status changes
         if self.shipStatus==self.STATUS_SELECTED:
@@ -71,26 +75,22 @@ class Ship( RelativeLayout, HoverBehavior ):
         elif self.shipStatus==self.STATUS_WAITING_TO_BE_PICKED_UP:
             self.color = Color(1,1,0)
         elif self.shipStatus==self.STATUS_PLACED:
+            self.addZone()
             self.color = Color(0,1,1)
 
         self.drawShip()
 
     def addZone(self):
-        print('laeva asukoht gobaalne', self.to_window( self.x, self.y))
-        #if self.shipZone:
-        #    self.remove_widget(self.shipZone)
-        #print(self.shipStatus)
-        #if self.shipStatus == self.STATUS_PLACED:
-        self.shipZone = ShipZone( self )
-        self.add_widget(self.shipZone)
-        print(self.shipZone)
-        print(self.shipZone.pos)
-        print('siphzone asukoht gobaalne', self.shipZone.to_window( self.shipZone.x, self.shipZone.y))
-        self.shipZone.zoneStatus = ShipZone.STATUS_GREY
-        self.shipZone.draw()
-        print('siphzone asukoht gobaalne', self.shipZone.to_window( self.shipZone.x, self.shipZone.y))
+        if self.shipZone:
+            self.remove_widget(self.shipZone)
+            self.shipZone = None
 
-
+        def drawZone(dt): #fixme: why is the clock required, how can i do it without it :S
+            self.shipZone = ShipZone( self )
+            self.add_widget(self.shipZone)
+            self.shipZone.zoneStatus = ShipZone.STATUS_GREY
+            self.shipZone.draw()
+        Clock.schedule_once(drawZone, 0)
 
     #def on_touch_down(self, touch): #this fires on the event that someone clicks on the ship
     #    return super(Ship, self).on_touch_down(touch) #propagates to children ,        http://kivy.org/docs/guide/events.html#trigger-events -  search: 'At Line 5:'

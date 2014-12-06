@@ -63,3 +63,4 @@ class GameState():
     def print_matrix(self, matrix):
         for row in matrix:
             print(row)
+
