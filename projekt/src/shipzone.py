@@ -35,7 +35,7 @@ class ShipZone( RelativeLayout, HoverBehavior, ParentFinder ):
     def draw(self):
         self.clear_widgets()
         self.canvas.clear()
-        self.pos=(self.ship.pos[0]-50, self.ship.pos[1]-50)
+        self.pos=(-50, -50)
 
         for shipZoneElement in self.createShipZoneElements():
             self.add_widget( shipZoneElement )

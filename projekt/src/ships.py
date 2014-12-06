@@ -73,19 +73,22 @@ class Ship( RelativeLayout, HoverBehavior ):
         elif self.shipStatus==self.STATUS_PLACED:
             self.color = Color(0,1,1)
 
-        self.addZone()
         self.drawShip()
 
     def addZone(self):
-        print(self.shipZone)
+        print('laeva asukoht gobaalne', self.to_window( self.x, self.y))
         #if self.shipZone:
         #    self.remove_widget(self.shipZone)
         #print(self.shipStatus)
         #if self.shipStatus == self.STATUS_PLACED:
         self.shipZone = ShipZone( self )
         self.add_widget(self.shipZone)
+        print(self.shipZone)
+        print(self.shipZone.pos)
+        print('siphzone asukoht gobaalne', self.shipZone.to_window( self.shipZone.x, self.shipZone.y))
         self.shipZone.zoneStatus = ShipZone.STATUS_GREY
         self.shipZone.draw()
+        print('siphzone asukoht gobaalne', self.shipZone.to_window( self.shipZone.x, self.shipZone.y))
 
 
 

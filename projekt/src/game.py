@@ -77,9 +77,9 @@ class Game( Widget ):
         grid = battlefieldGridElement.getParentByClass(Grid)
         grid.gameState.placeShipToGrid( ship, battlefieldGridElement)
 
-        def drawZone(dt):
-            ship.addZone()
-        Clock.schedule_once(drawZone, 0)
+        #def drawZone(dt):
+        #    ship.addZone()
+        #Clock.schedule_once(drawZone, 0)
 
     def canRotateShip(self, ship): #todo implement this
         if not isinstance( ship, Ship ):
@@ -113,7 +113,7 @@ class Game( Widget ):
         #self.testingMainGrid.gameState.generateSimplifiedMatrix()
         for ship in self.ships:
             ship.addZone()
-            ship.shipZone.draw()
+            #ship.shipZone.draw()
         #for rect in ship.shipRectangles:
         #    print('rect',rect, rect.pos, rect.to_window(rect.pos[0],rect.pos[1]))
         print('-----------------TESTING END------------------------')
