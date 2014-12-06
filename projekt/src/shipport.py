@@ -38,7 +38,6 @@ class ShipPort( BoxLayout ): #todo: this should also show status of bombed ships
             shipPier.draw()
 
     def onShipsInPort(self, instance, pos):
-        print( len(self.shipsInPort) )
         if len(self.shipsInPort)==0:
             self.game.allShipsOnGrid = True
 

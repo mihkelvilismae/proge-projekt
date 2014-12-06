@@ -1,6 +1,9 @@
 __author__ = 'mihkel'
 
 from .ships import Ship
+from .grid import Grid
+
+from kivy.clock import Clock
 from kivy.uix.widget import Widget
 from kivy.properties import StringProperty, ObjectProperty, BooleanProperty, ListProperty
 #---------------------------------------------------------------------------------------------------
@@ -16,7 +19,9 @@ class Game( Widget ):
     shipPort = None
     battleArea = None
     allShipsOnGrid = BooleanProperty(False)
-    gameState = None
+
+    testingMainGrid = None #fixme: remove this later
+    #gameState = None
 
     def __init__(self, **kwargs):
         self.bind(allShipsOnGrid=self.onAllShipsOnGrid)
@@ -27,19 +32,18 @@ class Game( Widget ):
         self.setupShipsInPort()
 
     def startBattle(self, instance):
-        print('startBattle')
+        pass
 
     def setSelectedShip(self, ship):
         self.unselectShips( ship )
         self.selectedShip = ship
 
     #def onSelectedShipChange(self, instance, newValue):
-    #    #print('seelectedwdaw')
     #    1
 
     def createShips(self):
-        shipsCountByLength = {4:1}
         shipsCountByLength = {1:4, 2:3, 3:2, 4:1}
+        shipsCountByLength = {4:1}
         for shipLength, shipCount in shipsCountByLength.items():
             for _ in range(0, shipCount):
                 ship = Ship( shipLength )
@@ -59,14 +63,23 @@ class Game( Widget ):
         return True
 
     def placeShipToGrid(self, ship, battlefieldGridElement):
+
+        #removes ship from port
         if ship.isInPort:
             ship.isInPort = False
             ship.shipPier.removeShip( ship )
             self.battleArea.add_widget( ship )
             ship.drawShip()
+
         ship.shipStatus = ship.STATUS_PLACED
         ship.placeShip( battlefieldGridElement.pos )
         self.setSelectedShip( ObjectProperty(None) )
+        grid = battlefieldGridElement.getParentByClass(Grid)
+        grid.gameState.placeShipToGrid( ship, battlefieldGridElement)
+
+        def drawZone(dt):
+            ship.addZone()
+        Clock.schedule_once(drawZone, 0)
 
     def canRotateShip(self, ship): #todo implement this
         if not isinstance( ship, Ship ):
@@ -81,9 +94,7 @@ class Game( Widget ):
             return True
 
     def bombardGrid(self, gridElement):
-        print('bombardGrid toimus')
         gridElement.bombard()
-        print(gridElement)
 
     def unselectShips(self, shipNotToUnselect=None):
         for ship in self.ships:
@@ -93,12 +104,13 @@ class Game( Widget ):
     def onAllShipsOnGrid(self, instance, pos):
         self.screen.gameScreenView.drawStartingButton()
         self.screen.gameScreenView.removeShipPort()
-        print('allshipsongrid')
 
     # @testing
     def testing(self):
         print('-----------------TESTING START------------------------')
-        print(self.shipPort.shipsInPort)
+        #print(self.testingMainGrid.gameState.getStateOnAreaCoordinates('A',2))
+        #print(self.testingMainGrid.gameState.printGameStateMatrix())
+        #self.testingMainGrid.gameState.generateSimplifiedMatrix()
         for ship in self.ships:
             ship.addZone()
             ship.shipZone.draw()

@@ -2,7 +2,10 @@ __author__ = 'mihkel'
 
 from .behaviours import HoverBehavior
 from .gameconfig import GridConfig
+from .gameState import GameState
+from .parentFinder import ParentFinder
 
+import collections
 from kivy.app import App
 from kivy.uix.widget import Widget
 from kivy.uix.label import Label
@@ -21,17 +24,24 @@ import random
 #---------------------------------------------------------------------------------------------------
 #       @Grid
 #---------------------------------------------------------------------------------------------------
-class Grid( GridLayout ):
+class Grid( GridLayout, ParentFinder):
     game = None
     sizeMultiplier = 1
     gridElements = dict()
     gridConfig = None
+    gameState = None
 
     def __init__(self, sizeMultiplier=1 ):
+        self.gameState=GameState( self )
         self.sizeMultiplier = sizeMultiplier
         self.gridConfig = GridConfig(sizeMultiplier=self.sizeMultiplier)
         super().__init__(col_default_width=self.gridConfig.gridElementSize[0], col_force_default=True, cols=11)
         #game.mainGrid = self
+
+    def draw(self):
+        self.getGame().testingMainGrid = self
+        self.addGridElements()
+        self.gameState.createGameStateMatrix()
 
     def addTestingButton(self):
         button = Button(text='XXX',size=(100,50),size_hint=(None,None), pos_hint= { 'center_x' : 0.5 })
@@ -42,17 +52,16 @@ class Grid( GridLayout ):
         self.add_widget(button)
 
     def addGridElements(self):
-
-        self.gridElements = dict()
+        self.gridElements = collections.OrderedDict()
         self.get_root_window().children[0].gridElements = self.gridElements
         for rowNr in range(0,11):
-            self.gridElements[ rowNr ] = dict()
+            self.gridElements[ rowNr ] = collections.OrderedDict()
             for colNr, colCharacter in enumerate(list(' ABCDEFGHIJ')):
                 if rowNr==0 and colNr==0:
                     self.addTestingButton()
                     continue
 
-                if 1 and (rowNr==0 or colNr==0):
+                if rowNr==0 or colNr==0:
                     if rowNr==0:
                         gridLabelElementText = colCharacter
                     elif colNr==0:
@@ -64,30 +73,26 @@ class Grid( GridLayout ):
                 self.add_widget( gridElement )
                 gridElement.draw()
 
-
-
     def calculcateGridElementPosition(self, rowNr, colNr):
         position = (self.gridConfig.battlefieldRectangleSize[0] * rowNr, self.gridConfig.battlefieldRectangleSize[1] * colNr)
         return position
 
-
 #---------------------------------------------------------------------------------------------------
 #       Grid Elements
 #---------------------------------------------------------------------------------------------------
-#class GridElement( RelativeLayout):
-class GridElement( RelativeLayout, HoverBehavior ):
+class GridElement( RelativeLayout, HoverBehavior, ParentFinder ):
     def __init__(self, gridConfig, **kwargs):
         super().__init__(size_hint = (None,None), size=gridConfig.gridElementSize, **kwargs)
 
 class GridBattlefieldElement( GridElement ):
     game = None
-    rowCoordinate = None
-    columnCoordinate = None
+    rowNr = None
+    colChar = None
     isBombed = False
 
-    def __init__(self, gridConfig, rowCoordinate, columnCoordinate, **kwargs):
-        self.rowCoordinate = rowCoordinate
-        self.columnCoordinate = columnCoordinate
+    def __init__(self, gridConfig, rowNr, colChar, **kwargs):
+        self.rowNr = rowNr
+        self.colChar = colChar
         self.gridConfig = gridConfig
         super().__init__(gridConfig=gridConfig, **kwargs)
 
@@ -110,13 +115,11 @@ class GridBattlefieldElement( GridElement ):
 
     def bombard(self):
         #elementRectangle = Rectangle( pos_hint=(None,None), size=self.gridConfig.battlefieldRectangleSize, pos=self.calculateElementRectanglePosition() )
-        print(self.calculateElementRectanglePosition())
         #line = Line(points=[0,50], width=10)
         #self.canvas.add(Color(50,50,50))
         #self.canvas.add( line )
         self.isBombed = True
         self.canvas.clear()
-        print('ement boboblbl')
 
 # EVENT BINDINGS (start):
     def on_touch_down(self, touch): #this fires on the event that someone clicks on the grid
@@ -153,7 +156,8 @@ class GridLabelElement( GridElement ):
 class PointerRectangle( Widget ):
     def __init__(self, gridConfig, **kwargs):
         super().__init__( **kwargs)
-        tooltipRectangleColor = Color(1, 0, 0, .5, mode='rgba')
+        #tooltipRectangleColor = Color(1, 0, 0, .5, mode='rgba')
+        tooltipRectangleColor = Color(1, 0, 0, .5)
         self.canvas.add( tooltipRectangleColor )
         tooltipRectangle = Rectangle(size=gridConfig.battlefieldRectangleSize, pos=[5,5])
         self.canvas.add( tooltipRectangle )

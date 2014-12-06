@@ -2,6 +2,7 @@ __author__ = 'mihkel'
 
 from .shipport import ShipPort
 from .grid import Grid
+from .gameState import GameState
 
 from kivy.app import App
 from kivy.uix.widget import Widget
@@ -24,7 +25,6 @@ import random
 class MainMenuView( Widget ):
     game = None
     def __init__(self, **kwargs):
-        print('xxx')
         super().__init__(**kwargs)
 
     def draw(self):
@@ -99,6 +99,6 @@ class BattleArea( RelativeLayout ):
     def drawMainGrid(self):
         self.mainGrid = Grid(sizeMultiplier=1)
         self.parent.mainGrid = self.mainGrid
-        print(self.parent)
         self.add_widget( self.mainGrid )
-        self.mainGrid.addGridElements()
+        self.mainGrid.draw()
+        #self.mainGrid.addGridElements()

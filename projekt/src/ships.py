@@ -3,6 +3,9 @@ __author__ = 'mihkel'
 from .behaviours import HoverBehavior
 from .gameconfig import MainConfig
 from .shipzone import ShipZone
+from .parentFinder import ParentFinder
+from .grid import Grid
+
 
 from kivy.app import App
 from kivy.uix.widget import Widget
@@ -23,7 +26,7 @@ import random
 #---------------------------------------------------------------------------------------------------
 #       @Ship
 #---------------------------------------------------------------------------------------------------
-class Ship( FloatLayout, HoverBehavior ):
+class Ship( RelativeLayout, HoverBehavior ):
     STATUS_WAITING_TO_BE_PICKED_UP = 'waitingToBePickedUp'
     STATUS_PLACED = 'placed'
     STATUS_SELECTED = 'selected'
@@ -49,10 +52,19 @@ class Ship( FloatLayout, HoverBehavior ):
         self.drawShip()
         self.bind(shipStatus=self.on_status)
 
+    def drawShip(self):
+        self.clear_widgets()
+        self.canvas.clear()
+        #for i,elementRectangle in zip([Color(0,1,1),Color(1,1,0),Color(0,0,1),Color(1,1,1)], self.createShipElementRectangles()):
+        for shipRectToRemove in self.shipRectangles.copy(): #FIXME: SHIPRECTANGLES STAY IN LOWER-LEFT PART OF CANVAS AND DONT DISAPPEAR
+            self.remove_widget( shipRectToRemove )
+            self.shipRectangles.remove(shipRectToRemove)
+        for elementRectangle in self.createShipElementRectangles():
+            self.add_widget(elementRectangle)
+            self.shipRectangles.append( elementRectangle )
 
 # EVENT BINDINGS (start):
     def on_status(self, instance, pos): #this fires when the status changes
-        #print( self.shipStatus )
         if self.shipStatus==self.STATUS_SELECTED:
             self.color = Color(1,0,1)
             self.game.setSelectedShip(self)
@@ -61,17 +73,33 @@ class Ship( FloatLayout, HoverBehavior ):
         elif self.shipStatus==self.STATUS_PLACED:
             self.color = Color(0,1,1)
 
+        self.addZone()
         self.drawShip()
 
     def addZone(self):
+        print(self.shipZone)
+        #if self.shipZone:
+        #    self.remove_widget(self.shipZone)
+        #print(self.shipStatus)
+        #if self.shipStatus == self.STATUS_PLACED:
         self.shipZone = ShipZone( self )
         self.add_widget(self.shipZone)
+        self.shipZone.zoneStatus = ShipZone.STATUS_GREY
         self.shipZone.draw()
-        self.shipZone.zoneStatus = ShipZone.STATUS_GREEN
 
 
+
+    #def on_touch_down(self, touch): #this fires on the event that someone clicks on the ship
+    #    return super(Ship, self).on_touch_down(touch) #propagates to children ,        http://kivy.org/docs/guide/events.html#trigger-events -  search: 'At Line 5:'
+    # event bindings:
     def on_touch_down(self, touch): #this fires on the event that someone clicks on the ship
-        return super(Ship, self).on_touch_down(touch) #propagates to children ,        http://kivy.org/docs/guide/events.html#trigger-events -  search: 'At Line 5:'
+        if self.collide_point(*touch.pos):
+            #if self.ship.shipStatus == self.ship.STATUS_SELECTED:
+                #if game.canRotateShip( self.ship):
+                #    game.rotateShip( self.ship )
+            self.shipStatus = self.STATUS_SELECTED
+
+            return True
 
 # EVENT BINDINGS (end)
 
@@ -87,21 +115,10 @@ class Ship( FloatLayout, HoverBehavior ):
         self.pos = position
         self.drawShip()
 
-    def drawShip(self):
-        self.clear_widgets()
-        self.canvas.clear()
-        #for i,elementRectangle in zip([Color(0,1,1),Color(1,1,0),Color(0,0,1),Color(1,1,1)], self.createShipElementRectangles()):
-        for shipRectToRemove in self.shipRectangles.copy(): #FIXME: SHIPRECTANGLES STAY IN LOWER-LEFT PART OF CANVAS AND DONT DISAPPEAR
-            self.remove_widget( shipRectToRemove )
-            self.shipRectangles.remove(shipRectToRemove)
-        for elementRectangle in self.createShipElementRectangles():
-            self.add_widget(elementRectangle)
-            self.shipRectangles.append( elementRectangle )
-
     def createShipElementRectangles(self):
         shipBlockWidth = self.mainConfig.shipBlockWidth
         elementRectangles = list()
-        elementPosition = self.pos
+        elementPosition = (0,0)
         for i in range(0, self.length):
             #elementRectangle = Rectangle(pos=elementPosition, size=(shipBlockWidth, shipBlockWidth))
             elementRectangle = ShipElementRectangle( self, elementPosition )
@@ -113,9 +130,10 @@ class Ship( FloatLayout, HoverBehavior ):
         return elementRectangles
 
     #def bombardShipPart(self):
-    1
+    #   pass
+
     def bombardGridxxx(self):
-        print('bombardGrid toimus')
+        pass
 
     def calculateShipSize(self, shipLength):
         return (self.mainConfig.shipBlockWidth * shipLength, self.mainConfig.shipBlockHeight)
@@ -123,17 +141,19 @@ class Ship( FloatLayout, HoverBehavior ):
 #---------------------------------------------------------------------------------------------------------------
 #   ShipElementRectangle
 #---------------------------------------------------------------------------------------------------------------
-class ShipElementRectangle( Widget, HoverBehavior ):
+class ShipElementRectangle( Widget, HoverBehavior, ParentFinder ):
      ship = None
      color = Color()
 
      def __init__(self, ship, elementPosition, **kwargs):
-        size = (MainConfig().shipBlockWidth, MainConfig().shipBlockWidth)
-        super().__init__(size_hint=(None,None), pos=elementPosition, size=size, **kwargs)
+        super().__init__(size_hint=(None,None), pos=elementPosition, **kwargs)
         self.ship = ship
         self.draw()
 
      def draw(self):
+         #grid = self.getParentByClass(Grid)
+         #size = grid.gridConfig().gridElementSize
+         self.size=(MainConfig().shipBlockWidth, MainConfig().shipBlockHeight)
          self.canvas.clear()
          elementRectangle = Rectangle(pos=self.pos, size=self.size)
          self.canvas.add( self.ship.color )
@@ -142,14 +162,15 @@ class ShipElementRectangle( Widget, HoverBehavior ):
 
 # event bindings:
      def on_touch_down(self, touch): #this fires on the event that someone clicks on the ship
-        if self.collide_point(*touch.pos):
+         2
+        #---if self.collide_point(*touch.pos):
             #print('sai pihta')
             #if self.ship.shipStatus == self.ship.STATUS_SELECTED:
                 #if game.canRotateShip( self.ship):
                 #    game.rotateShip( self.ship )
-            self.ship.shipStatus = self.ship.STATUS_SELECTED
+        #----    self.ship.shipStatus = self.ship.STATUS_SELECTED
 
-            return True
+        #----  return True
 
      def on_enter(self):
          2

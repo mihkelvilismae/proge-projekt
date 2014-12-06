@@ -62,14 +62,11 @@ class HoverBehavior():
         self.border_point = mousePosition
         self.hovered = inside
         if inside:
-            #print('SIEENSE:',self)
             self.dispatch('on_enter')
         else:
-            #print('VÖLJUS:',self)
             self.dispatch('on_leave')
 
     def on_enter(self):
-        #print('onente', self)
         pass
 
     def on_leave(self):

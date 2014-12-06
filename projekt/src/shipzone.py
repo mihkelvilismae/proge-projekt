@@ -36,7 +36,6 @@ class ShipZone( RelativeLayout, HoverBehavior, ParentFinder ):
         self.clear_widgets()
         self.canvas.clear()
         self.pos=(self.ship.pos[0]-50, self.ship.pos[1]-50)
-        print('tehakse draw zone')
 
         for shipZoneElement in self.createShipZoneElements():
             self.add_widget( shipZoneElement )
@@ -49,7 +48,6 @@ class ShipZone( RelativeLayout, HoverBehavior, ParentFinder ):
         #self.canvas.add(elementRectangle)
 
     def createShipZoneElements(self):
-        print('creatatetete')
         shipZoneElements = []
         #todo: take into account ship direction
         for x in range(0, self.ship.length+2):
@@ -62,13 +60,24 @@ class ShipZone( RelativeLayout, HoverBehavior, ParentFinder ):
         shipZoneElements.append( shipZoneElement )
         return shipZoneElements
 
+    def getColor(self):
+        if self.zoneStatus == self.STATUS_GREY:
+            color = Color(0.8, 0.8, 0.6 , 0.5)
+        #elif self.zoneStatus == self.STATUS_GREEN:
+        else:
+            color = Color(0, 1, 0, 0.5)
+        return color
+
     def on_zoneStatus(self, instance, pos):
-        print('onzonestatus', self.zoneStatus)
         self.draw()
 
     def on_enter(self):
-        print('shipzone', self)
+        print('siesenes shipzonei', self)
+        pass
 
+#---------------------------------------------------------------------------------------------------------------
+#   ShipZoneElement
+#---------------------------------------------------------------------------------------------------------------
 class ShipZoneElement( Widget, ParentFinder):
     shipzone = None
     game = None
@@ -78,10 +87,13 @@ class ShipZoneElement( Widget, ParentFinder):
         self.yMultiplier = yMultiplier
         self.shipZone = shipZone
 
+    def on_pos(self, instance, pos):
+        self.draw()
+
     def draw(self):
         self.size = self.getZoneElementSize()
         self.pos = self.calculateZoneElementPos()
-        self.canvas.add(Color(1,0,0))
+        self.canvas.add( self.shipZone.getColor() )
         self.canvas.add(Rectangle(size=self.size, pos=self.pos))
 
     def calculateZoneElementPos(self):
