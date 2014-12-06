@@ -47,17 +47,17 @@ class Grid( GridLayout, ParentFinder):
         self.addGridElements()
         self.gameState.createGameStateMatrix()
 
-    def isElementInGridBounds(self, elementToCheck):
+    #def isShipInGridBounds(self, ship):
+
+    def isElementInGridBounds(self, elementToCheck): #fixme: this has hardcoded stuff (most likely wont work with the smaller grid version), because i couldnt get the proper position for the grid
         elementToCheckX = elementToCheck.to_window(elementToCheck.x, elementToCheck.y)[0]
         elementToCheckY = elementToCheck.to_window(elementToCheck.x, elementToCheck.y)[1]
         gridBottomY = self.to_widget(self.x, self.y)[1]+100
         gridTopY = 11*self.rowHeight
 
         if elementToCheckY < gridBottomY or elementToCheckY>gridTopY or elementToCheckX < self.x+50 or 11*self.colWidth < elementToCheckX:
-            print('ei ole sees')
             return False
         else:
-            print('on sees')
             return True
 
     def addTestingButton(self):
@@ -71,9 +71,9 @@ class Grid( GridLayout, ParentFinder):
     def addGridElements(self):
         self.gridElements = collections.OrderedDict()
         self.get_root_window().children[0].gridElements = self.gridElements
-        for rowNr in range(0,11):
+        for rowNr in self.getGame().mainConfig.rowNumbers:
             self.gridElements[ rowNr ] = collections.OrderedDict()
-            for colNr, colCharacter in enumerate(list(' ABCDEFGHIJ')):
+            for colNr, colCharacter in enumerate(self.getGame().mainConfig.columnChars):
                 if rowNr==0 and colNr==0:
                     self.addTestingButton()
                     continue

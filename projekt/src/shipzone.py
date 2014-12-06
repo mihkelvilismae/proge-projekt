@@ -34,13 +34,8 @@ class ShipZone( RelativeLayout, HoverBehavior, ParentFinder ):
         self.clear_widgets()
         self.canvas.clear()
         self.pos=(-50, -50)
-        print('------------------------------------------------------')
-        print('------------------------------------------------------')
-        print('------------------------------------------------------')
-        print('------------------------------------------------------')
         print(self.ship.getGrid(), 'window pos: ',self.ship.getGrid().to_window(self.ship.getGrid().x, self.ship.getGrid().y), 'size:', self.ship.getGrid().size)
         for shipZoneElement in self.createShipZoneElements():
-            print('------------------------------------------------------')
             self.add_widget( shipZoneElement )
             shipZoneElement.draw()
             if self.ship.getGrid().isElementInGridBounds( shipZoneElement ):
@@ -73,7 +68,6 @@ class ShipZone( RelativeLayout, HoverBehavior, ParentFinder ):
         self.draw()
 
     def on_enter(self):
-        print('siesenes shipzonei', self)
         pass
 
 #---------------------------------------------------------------------------------------------------------------

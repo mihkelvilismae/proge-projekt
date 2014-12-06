@@ -2,6 +2,7 @@ __author__ = 'mihkel'
 
 from .ships import Ship
 from .grid import Grid
+from .gameconfig import MainConfig
 
 from kivy.clock import Clock
 from kivy.uix.widget import Widget
@@ -24,6 +25,7 @@ class Game( Widget ):
     #gameState = None
 
     def __init__(self, **kwargs):
+        self.mainConfig = MainConfig()
         self.bind(allShipsOnGrid=self.onAllShipsOnGrid)
 
     def startGame(self):
@@ -58,9 +60,13 @@ class Game( Widget ):
         self.shipPort.shipPiers[ship.length].addShip( ship )
 
     def canShipBePlaced(self, ship, battlefieldGridElement): #todo implement logic for out of borders etc
-        if not isinstance( ship, Ship ):
-            return False
-        return True
+        if isinstance( ship, Ship ) and self.isShipPositionValid( ship, battlefieldGridElement ):
+            return True
+        return False
+
+    def isShipPositionValid(self, ship, battlefieldGridElement):
+        grid = battlefieldGridElement.getParentByClass(Grid)
+        return grid.gameState.isShipPositionValid( ship, battlefieldGridElement )
 
     def placeShipToGrid(self, ship, battlefieldGridElement):
 
@@ -75,7 +81,7 @@ class Game( Widget ):
         ship.placeShip( battlefieldGridElement.pos )
         self.setSelectedShip( ObjectProperty(None) )
         grid = battlefieldGridElement.getParentByClass(Grid)
-        grid.gameState.placeShipToGrid( ship, battlefieldGridElement)
+        grid.gameState.placeShipInGameStateMatrix( ship, battlefieldGridElement)
 
         #def drawZone(dt):
         #    ship.addZone()
@@ -110,9 +116,9 @@ class Game( Widget ):
         print('-----------------TESTING START------------------------')
         #print(self.testingMainGrid.gameState.getStateOnAreaCoordinates('A',2))
         #print(self.testingMainGrid.gameState.printGameStateMatrix())
-        #self.testingMainGrid.gameState.generateSimplifiedMatrix()
-        for ship in self.ships:
-            ship.addZone()
+        self.testingMainGrid.gameState.generateSimplifiedMatrix()
+        #for ship in self.ships:
+        #    ship.addZone()
             #ship.shipZone.draw()
         #for rect in ship.shipRectangles:
         #    print('rect',rect, rect.pos, rect.to_window(rect.pos[0],rect.pos[1]))
