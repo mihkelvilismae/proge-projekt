@@ -9,6 +9,10 @@ import collections
 #----------------------------------------------------------------------------------------------------------------
 class GameStateMatrix():
 
+    def addShipZoneToMatrix(self, ship, battlefieldGridElement):
+        for areaPosition in self.getAreasAroundShip(  ship, battlefieldGridElement ):
+            self.setStateOnAreaCoordinates( areaPosition[0], areaPosition[1], self.STATE_SHIPZONE)
+
     def print_matrix(self, matrix):
         for row,x in enumerate(matrix):
             print(x)
@@ -75,6 +79,7 @@ class GameStateMatrix():
         self.print_matrix(simplifiedMatrix)
         return simplifiedMatrix
 
+#TODO: REPLACED THIS:
     def generateSimplifiedElement(self, gameStateMatrixElement):
         if gameStateMatrixElement==self.STATE_EMPTY:
             simplifiedElement = '0'
@@ -128,11 +133,6 @@ class GameState( GameStateMatrix ):
         for _ in range(0, ship.length):
             self.setStateOnAreaCoordinates( colChar, rowNr, ship)
             colChar = self.incrementChar( colChar )
-
-    def addShipZoneToMatrix(self, ship, battlefieldGridElement):
-        for areaPosition in self.getAreasAroundShip(  ship, battlefieldGridElement ):
-            self.setStateOnAreaCoordinates( areaPosition[0], areaPosition[1], self.STATE_SHIPZONE)
-
 
 
     def isShipPositionValid(self, ship, battlefieldGridElement):
