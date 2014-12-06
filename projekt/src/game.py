@@ -60,13 +60,11 @@ class Game( Widget ):
         self.shipPort.shipPiers[ship.length].addShip( ship )
 
     def canShipBePlaced(self, ship, battlefieldGridElement): #todo implement logic for out of borders etc
-        if isinstance( ship, Ship ) and self.isShipPositionValid( ship, battlefieldGridElement ):
+        if isinstance( ship, Ship ) and battlefieldGridElement.getGameState().isShipPositionValid( ship, battlefieldGridElement ):
             return True
         return False
 
-    def isShipPositionValid(self, ship, battlefieldGridElement):
-        grid = battlefieldGridElement.getParentByClass(Grid)
-        return grid.gameState.isShipPositionValid( ship, battlefieldGridElement )
+
 
     def placeShipToGrid(self, ship, battlefieldGridElement):
 
@@ -80,7 +78,7 @@ class Game( Widget ):
         ship.shipStatus = ship.STATUS_PLACED
         ship.placeShip( battlefieldGridElement.pos )
         self.setSelectedShip( ObjectProperty(None) )
-        grid = battlefieldGridElement.getParentByClass(Grid)
+        grid = battlefieldGridElement.getGrid()
         grid.gameState.placeShipInGameStateMatrix( ship, battlefieldGridElement)
 
         #def drawZone(dt):

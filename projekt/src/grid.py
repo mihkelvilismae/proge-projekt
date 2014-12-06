@@ -101,6 +101,12 @@ class GridElement( RelativeLayout, HoverBehavior, ParentFinder ):
     def __init__(self, gridConfig, **kwargs):
         super().__init__(size_hint = (None,None), size=gridConfig.gridElementSize, **kwargs)
 
+    def getGrid(self):
+        return self.getParentByClass(Grid)
+
+    def getGameState(self):
+        return self.getParentByClass(Grid).gameState
+
 class GridBattlefieldElement( GridElement ):
     game = None
     rowNr = None
