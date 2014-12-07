@@ -86,7 +86,7 @@ class GameStateMatrix():
         #todo: make this work when direction='vertical'
         for _ in range(0, ship.length):
             stateOnPosition = self.getStateOnAreaCoordinates( colChar, rowNr )
-            if not stateOnPosition.isEmpty():
+            if stateOnPosition == False or not stateOnPosition.isEmpty():
                 return False
             colChar = self.incrementChar( colChar )
         return True
@@ -120,13 +120,10 @@ class GameState( GameStateMatrix ):
             colChar = self.incrementChar( colChar )
 
     def removeShipFromGameStateMatrix(self, ship):
-        print('---------------------------------------------')
-        print('removeShipFromGameStateMatrix', ship.length)
-        for shipStateMatrixElement in ship.shipStateMatrixElements:
+        for shipStateMatrixElement in ship.shipStateMatrixElements.copy():
             shipStateMatrixElement.removeShip()
-        for shipZoneStateMatrixElement in ship.shipZoneStateMatrixElements:
+        for shipZoneStateMatrixElement in ship.shipZoneStateMatrixElements.copy():
             shipZoneStateMatrixElement.removeChild(self.STATE_SHIPZONE)
-        print('---------------------------------------------')
 
 
     def isShipPositionValid(self, ship, colChar, rowNr):

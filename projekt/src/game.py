@@ -118,7 +118,8 @@ class Game( Widget ):
         #print(self.testingMainGrid.gameState.printGameStateMatrix())
         self.testingMainGrid.gameState.generateSimplifiedMatrix()
         for ship in self.ships:
-             print(ship)
+             if ship.length==4:
+                print(ship)
         #    ship.addZone()
             #ship.shipZone.draw()
         #for rect in ship.shipRectangles:

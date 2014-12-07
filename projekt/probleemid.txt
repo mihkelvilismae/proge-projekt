@@ -3,3 +3,6 @@
 
 - arusaamine objektide paigutamise kohta (shipzone'i jaoks kasutasin clocki, oleks pidanud saama ilma)
 - klassimuutjad refrensivad kõigil objektidle sama muutjat???
+
+TODO:
+laevade paigutamisel ei saa "laeva selectida" ja siis "panna laev enda vana ala sisse"

@@ -148,7 +148,6 @@ class Ship( RelativeLayout, HoverBehavior, ParentFinder ):
         return (self.mainConfig.shipBlockWidth * shipLength, self.mainConfig.shipBlockHeight)
 
     def on_pos(self, a,b):
-        print(self)
         if self.getGame()!=None:
             self.getGame().battleArea.mainGrid.gameState.removeShipFromGameStateMatrix(self)
 
