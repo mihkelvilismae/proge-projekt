@@ -91,6 +91,7 @@ class Ship( RelativeLayout, HoverBehavior, ParentFinder ):
         self.drawShip()
 
     def addZone(self):
+        print('addzone-----------------------')
         if self.shipZone:
             self.remove_widget(self.shipZone)
             self.shipZone = None

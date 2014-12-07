@@ -94,6 +94,7 @@ class GameScreenView( BoxLayout ):
 #---------------------------------------------------------------------------------------------------
 class BattleArea( RelativeLayout ):
     grid = None
+
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 

@@ -4,6 +4,7 @@ from .parentFinder import ParentFinder
 from .views import BattleArea
 from .gameconfig import *
 
+
 from kivy.graphics import *
 from kivy.uix.relativelayout import RelativeLayout
 from kivy.uix.floatlayout import FloatLayout
@@ -33,13 +34,15 @@ class ShipZone( RelativeLayout, HoverBehavior, ParentFinder ):
         self.clear_widgets()
         self.canvas.clear()
         self.pos=(-50, -50)
-        for shipZoneElement in self.createShipZoneElements():
+        self.shipZoneElements = self.createShipZoneElements()
+        for shipZoneElement in self.shipZoneElements:
             self.add_widget( shipZoneElement )
             shipZoneElement.draw()
             if self.ship.getGrid().isElementInGridBounds( shipZoneElement ):
                 pass
             else:
                 self.remove_widget( shipZoneElement )
+                self.shipZoneElements.remove( shipZoneElement )
 
     def createShipZoneElements(self):
         shipZoneElements = []
@@ -66,12 +69,13 @@ class ShipZone( RelativeLayout, HoverBehavior, ParentFinder ):
         self.draw()
 
     def on_enter(self):
+        print('enter shipzone', self, self.pos)
         pass
 
 #---------------------------------------------------------------------------------------------------------------
 #   ShipZoneElement
 #---------------------------------------------------------------------------------------------------------------
-class ShipZoneElement( Widget, ParentFinder):
+class ShipZoneElement( Widget, ParentFinder, HoverBehavior):
     shipzone = None
     xMultiplier = int
     yMultiplier = int
@@ -105,3 +109,8 @@ class ShipZoneElement( Widget, ParentFinder):
             size = GridConfig(sizeMultiplier=1).gridElementSize
         return size
         #return self.getGame()
+
+    def on_enter(self):
+        #if self.parent != None and self.getGame().ownShipGridArea and self.parent.parent in self.getGame().ownShipGridArea.ships:
+        print('enter shipzoneelement', self, self.pos)
+        pass
