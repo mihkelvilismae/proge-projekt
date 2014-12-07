@@ -33,7 +33,7 @@ class Game( Widget ):
 
     def startGame(self):
         self.screen.drawGameScreenView()
-        ships = self.createShips()
+        ships = self.createShips( self.battleArea.grid.gridConfig )
         self.activeArea.ships = ships
         self.setupShipsInPort( ships )
 
@@ -46,7 +46,7 @@ class Game( Widget ):
         Clock.schedule_once(populateGridFromSerializedGameState, 0)
 
     def populateGridFromSerializedGameState(self, grid, serializedGameState):
-        ships = self.createShips()
+        ships = self.createShips( grid.gridConfig )
         grid.getParentByClass(BattleArea).ships = ships
         for ship in ships:
             shipStatusInfo = serializedGameState['ships'][ship.length].pop()
@@ -61,14 +61,14 @@ class Game( Widget ):
     #def onSelectedShipChange(self, instance, newValue):
     #    1
 
-    def createShips(self):
+    def createShips(self, gridConfig):
         ships = []
         shipsCountByLength = {1:4, 2:3, 3:2, 4:1}
         shipsCountByLength = {1:1, 4:1}
         shipsCountByLength = {1:1}
         for shipLength, shipCount in shipsCountByLength.items():
             for _ in range(0, shipCount):
-                ship = Ship( shipLength )
+                ship = Ship( gridConfig, shipLength )
                 ship.game = self
                 #self.ships.append( ship )
                 ships.append( ship )

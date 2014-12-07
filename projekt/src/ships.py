@@ -49,12 +49,14 @@ class Ship( RelativeLayout, HoverBehavior, ParentFinder ):
     startRowNr = int
     startColChar = str
     temporarilyRemovedFromMatrix = False
+    gridConfig = None
 
     #shipStateMatrixElements = []
     #shipZoneStateMatrixElements = []
 
-    def __init__(self, length=1, **kwargs):
+    def __init__(self, gridConfig, length=1, **kwargs):
         self.mainConfig = MainConfig()
+        self.gridConfig = gridConfig
         super().__init__(size_hint=(None,None), pos=self.position, size=self.calculateShipSize(length), **kwargs)
         self.length = length
         self.drawShip()
@@ -72,6 +74,7 @@ class Ship( RelativeLayout, HoverBehavior, ParentFinder ):
         for elementRectangle in self.createShipElementRectangles():
             self.add_widget(elementRectangle)
             self.shipRectangles.append( elementRectangle )
+            elementRectangle.draw()
 
     def getGrid(self):
         return self.getParentByClass( BattleArea ).grid
@@ -97,7 +100,7 @@ class Ship( RelativeLayout, HoverBehavior, ParentFinder ):
             self.shipZone = None
 
         def drawZone(dt): #fixme: why is the clock required, how can i do it without it :S
-            self.shipZone = ShipZone( self )
+            self.shipZone = ShipZone( self, self.gridConfig )
             self.add_widget(self.shipZone)
             self.shipZone.zoneStatus = ShipZone.STATUS_GREY
             self.shipZone.draw()
@@ -130,7 +133,7 @@ class Ship( RelativeLayout, HoverBehavior, ParentFinder ):
         self.drawShip()
 
     def createShipElementRectangles(self):
-        shipBlockWidth = self.mainConfig.shipBlockWidth
+        shipBlockWidth = self.gridConfig.shipBlockWidth
         elementRectangles = list()
         elementPosition = (0,0)
         for i in range(0, self.length):
@@ -150,7 +153,9 @@ class Ship( RelativeLayout, HoverBehavior, ParentFinder ):
         pass
 
     def calculateShipSize(self, shipLength):
-        return (self.mainConfig.shipBlockWidth * shipLength, self.mainConfig.shipBlockHeight)
+        #todo: direction
+        return (self.gridConfig.shipBlockWidth * shipLength, self.gridConfig.shipBlockHeight)
+        #return (self.mainConfig.shipBlockWidth * shipLength, self.mainConfig.shipBlockHeight)
 
     def on_pos(self, a,b):
         if self.getGame()!=None:
@@ -166,12 +171,12 @@ class ShipElementRectangle( Widget, HoverBehavior, ParentFinder ):
      def __init__(self, ship, elementPosition, **kwargs):
         super().__init__(size_hint=(None,None), pos=elementPosition, **kwargs)
         self.ship = ship
-        self.draw()
+
 
      def draw(self):
          #grid = self.getParentByClass(Grid)
          #size = grid.gridConfig().gridElementSize
-         self.size=(MainConfig().shipBlockWidth, MainConfig().shipBlockHeight)
+         self.size=self.parent.gridConfig.shipBlockSize
          self.canvas.clear()
          elementRectangle = Rectangle(pos=self.pos, size=self.size)
          self.canvas.add( self.ship.color )

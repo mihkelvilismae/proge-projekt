@@ -23,22 +23,25 @@ class ShipZone( RelativeLayout, HoverBehavior, ParentFinder ):
 
     game = None
     ship = None
+    gridConfig = None
 
     zoneStatus = StringProperty( STATUS_NOT_VISIBLE )
-    def __init__(self, ship, **kwargs):
-        super().__init__(size_hint=(None,None), size=(50,50), **kwargs)
+    def __init__(self, ship, gridConfig, **kwargs):
+        #size = self.getParentByClass(BattleArea).grid.gridConfig.gridElementSize
+        self.gridConfig = gridConfig
+        super().__init__(size_hint=(None,None), size=self.gridConfig.battlefieldRectangleSize, **kwargs)
         self.ship = ship
         self.bind(zoneStatus=self.on_zoneStatus)
 
     def draw(self):
         self.clear_widgets()
         self.canvas.clear()
-        self.pos=(-50, -50)
+        self.pos=(-self.gridConfig.battlefieldRectangleSize[0],-self.gridConfig.battlefieldRectangleSize[1])
         self.shipZoneElements = self.createShipZoneElements()
         for shipZoneElement in self.shipZoneElements:
             self.add_widget( shipZoneElement )
             shipZoneElement.draw()
-            if self.ship.getGrid().isElementInGridBounds( shipZoneElement ):
+            if 1 or self.ship.getGrid().isElementInGridBounds( shipZoneElement ): #xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
                 pass
             else:
                 self.remove_widget( shipZoneElement )
@@ -103,11 +106,12 @@ class ShipZoneElement( Widget, ParentFinder, HoverBehavior):
 
     def getZoneElementSize(self):
         #fixme: sometimes the first check fails? it should already be added and have a parent?
-        if self.getParentByClass(BattleArea)!=None: #if parent is battleArea, then sizeMulttplier is 1
-            size = GridConfig(sizeMultiplier=1).gridElementSize
-        else:
-            size = GridConfig(sizeMultiplier=1).gridElementSize
-        return size
+        # if self.getParentByClass(BattleArea)!=None: #if parent is battleArea, then sizeMulttplier is 1
+        #     size = GridConfig(sizeMultiplier=1).gridElementSize
+        # else:
+        #     size = GridConfig(sizeMultiplier=1).gridElementSize
+        #return size
+        return self.shipZone.getParentByClass(BattleArea).grid.gridConfig.gridElementSize
         #return self.getGame()
 
     def on_enter(self):
