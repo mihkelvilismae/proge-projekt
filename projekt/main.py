@@ -4,7 +4,7 @@ from src.gameconfig import *
 
 from src.game import Game
 from src.gameconfig import MainConfig, GridConfig
-from src.views import MainMenuView, GameScreenView, BattleArea
+from src.views import MainMenuView, GameScreenView
 from src.behaviours import HoverBehavior
 from src.screen import Screen
 

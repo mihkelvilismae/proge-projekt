@@ -57,25 +57,25 @@ class GameScreenView( BoxLayout ):
         self.game = self.parent.game
         #self.game = self.get_root_window().children[0]
         self.size = self.parent.size
-        self.drawBattleArea()
+        self.drawShipPlacementArea()
         self.drawShipPort()
 
     def addWidgetToGameScreenView(self, widgetToAdd):
         self.add_widget( widgetToAdd )
 
-    def drawBattleArea(self):
-        self.game.battleArea = BattleArea()
-        self.game.activeArea = self.game.battleArea
-        self.addWidgetToGameScreenView( self.game.battleArea )
-        self.game.battleArea.draw(1)
+    def drawShipPlacementArea(self):
+        self.game.shipPlacementArea = GridArea()
+        self.game.activeArea = self.game.shipPlacementArea
+        self.addWidgetToGameScreenView( self.game.shipPlacementArea )
+        self.game.shipPlacementArea.draw(1)
 
     def drawOwnShipGridArea(self):
-        self.game.ownShipGridArea = BattleArea()
+        self.game.ownShipGridArea = GridArea()
         self.addWidgetToGameScreenView( self.game.ownShipGridArea )
         self.game.ownShipGridArea.draw(2)
 
     def drawEnemyShipGridArea(self):
-        self.game.enemyShipGridArea = BattleArea()
+        self.game.enemyShipGridArea = GridArea()
         self.addWidgetToGameScreenView( self.game.enemyShipGridArea )
         self.game.enemyShipGridArea.draw(1)
 
@@ -97,7 +97,7 @@ class GameScreenView( BoxLayout ):
 #---------------------------------------------------------------------------------------------------
 #       BattleArea
 #---------------------------------------------------------------------------------------------------
-class BattleArea( RelativeLayout ):
+class GridArea( RelativeLayout ):
     grid = None
 
     def __init__(self, **kwargs):

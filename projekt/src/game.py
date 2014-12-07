@@ -3,7 +3,7 @@ __author__ = 'mihkel'
 from .ships import Ship
 from .grid import Grid
 from .gameconfig import MainConfig
-from .views import BattleArea
+from .views import GridArea
 
 from kivy.clock import Clock
 from kivy.uix.widget import Widget
@@ -20,7 +20,7 @@ class Game( Widget ):
     mainGrid = None
     shipPort = None
 
-    battleArea = None
+    shipPlacementArea = None
     ownShipGridArea = None
     enemyShipGridArea = None
 
@@ -36,7 +36,7 @@ class Game( Widget ):
 
     def startGame(self):
         self.screen.drawGameScreenView()
-        ships = self.createShips( self.battleArea.grid.gridConfig )
+        ships = self.createShips( self.shipPlacementArea.grid.gridConfig )
         self.activeArea.ships = ships
         self.setupShipsInPort( ships )
 
@@ -54,7 +54,7 @@ class Game( Widget ):
 
     def populateGridFromSerializedGameState(self, grid, serializedGameState):
         ships = self.createShips( grid.gridConfig )
-        grid.getParentByClass(BattleArea).ships = ships
+        grid.getParentByClass(GridArea).ships = ships
         for ship in ships:
             shipStatusInfo = serializedGameState['ships'][ship.length].pop()
             ship.direction = shipStatusInfo['direction']
@@ -112,9 +112,9 @@ class Game( Widget ):
             ship.isInPort = False
             ship.shipPier.removeShip( ship )
 
-        if ship.getParentByClass(BattleArea)==None:
-            battleArea = battlefieldGridElement.getGrid().getParentByClass( BattleArea )
-            battleArea.add_widget( ship )
+        if ship.getParentByClass(GridArea)==None:
+            shipPlacementArea = battlefieldGridElement.getGrid().getParentByClass( GridArea )
+            shipPlacementArea.add_widget( ship )
             ship.drawShip()
 
         ship.shipStatus = ship.STATUS_PLACED
@@ -174,8 +174,8 @@ class Game( Widget ):
         #print(self.testingMainGrid.gameState.getStateOnAreaCoordinates('A',2))
         #print(self.testingMainGrid.gameState.printGameStateMatrix())
         print('BATTLEAREA-----------------------------------')
-        self.battleArea.grid.gameState.generateSimplifiedMatrix()
-        print(id(self.battleArea.grid.gameState))
+        self.shipPlacementArea.grid.gameState.generateSimplifiedMatrix()
+        print(id(self.shipPlacementArea.grid.gameState))
         if self.ownShipGridArea:
             print('ownShipGridArea -----------------------------------')
             print(id(self.ownShipGridArea.grid.gameState))

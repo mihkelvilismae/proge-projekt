@@ -5,7 +5,7 @@ from .gameconfig import MainConfig
 from .shipzone import ShipZone
 from .parentFinder import ParentFinder
 from .grid import Grid
-from .views import BattleArea
+from .views import GridArea
 
 from kivy.clock import Clock
 from kivy.app import App
@@ -77,7 +77,7 @@ class Ship( RelativeLayout, HoverBehavior, ParentFinder ):
             elementRectangle.draw()
 
     def getGrid(self):
-        return self.getParentByClass( BattleArea ).grid
+        return self.getParentByClass( GridArea ).grid
 
 # EVENT BINDINGS (start):
     def on_status(self, instance, pos): #this fires when the status changes
@@ -159,7 +159,7 @@ class Ship( RelativeLayout, HoverBehavior, ParentFinder ):
 
     def on_pos(self, a,b):
         if self.getGame()!=None:
-            self.getGame().battleArea.grid.gameState.removeShipFromGameStateMatrix(self)
+            self.getGame().shipPlacementArea.grid.gameState.removeShipFromGameStateMatrix(self)
 
 #---------------------------------------------------------------------------------------------------------------
 #   ShipElementRectangle

@@ -1,7 +1,7 @@
 __author__ = 'mihkel'
 from .behaviours import HoverBehavior
 from .parentFinder import ParentFinder
-from .views import BattleArea
+from .views import GridArea
 from .gameconfig import *
 
 
@@ -27,7 +27,6 @@ class ShipZone( RelativeLayout, HoverBehavior, ParentFinder ):
 
     zoneStatus = StringProperty( STATUS_NOT_VISIBLE )
     def __init__(self, ship, gridConfig, **kwargs):
-        #size = self.getParentByClass(BattleArea).grid.gridConfig.gridElementSize
         self.gridConfig = gridConfig
         super().__init__(size_hint=(None,None), size=self.gridConfig.battlefieldRectangleSize, **kwargs)
         self.ship = ship
@@ -105,14 +104,7 @@ class ShipZoneElement( Widget, ParentFinder, HoverBehavior):
         return (xPosition, yPosition)
 
     def getZoneElementSize(self):
-        #fixme: sometimes the first check fails? it should already be added and have a parent?
-        # if self.getParentByClass(BattleArea)!=None: #if parent is battleArea, then sizeMulttplier is 1
-        #     size = GridConfig(sizeMultiplier=1).gridElementSize
-        # else:
-        #     size = GridConfig(sizeMultiplier=1).gridElementSize
-        #return size
-        return self.shipZone.getParentByClass(BattleArea).grid.gridConfig.gridElementSize
-        #return self.getGame()
+        return self.shipZone.getParentByClass(GridArea).grid.gridConfig.gridElementSize
 
     def on_enter(self):
         #if self.parent != None and self.getGame().ownShipGridArea and self.parent.parent in self.getGame().ownShipGridArea.ships:
