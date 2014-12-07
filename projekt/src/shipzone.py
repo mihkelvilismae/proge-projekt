@@ -34,14 +34,16 @@ class ShipZone( RelativeLayout, HoverBehavior, ParentFinder ):
         self.bind(zoneStatus=self.on_zoneStatus)
 
     def draw(self):
+        print('-------------------------------------------------------------------------------------------------------------------------------------------------------------------')
+        print('-------------------------------------------------------------------------------------------------------------------------------------------------------------------')
         self.clear_widgets()
         self.canvas.clear()
         self.pos=(-self.gridConfig.battlefieldRectangleSize[0],-self.gridConfig.battlefieldRectangleSize[1])
         self.shipZoneElements = self.createShipZoneElements()
-        for shipZoneElement in self.shipZoneElements:
+        for shipZoneElement in self.shipZoneElements.copy():
             self.add_widget( shipZoneElement )
             shipZoneElement.draw()
-            if 1 or self.ship.getGrid().isElementInGridBounds( shipZoneElement ): #xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+            if self.ship.getGrid().isElementInGridBounds( shipZoneElement ):
                 pass
             else:
                 self.remove_widget( shipZoneElement )
@@ -58,6 +60,7 @@ class ShipZone( RelativeLayout, HoverBehavior, ParentFinder ):
         shipZoneElements.append( shipZoneElement )
         shipZoneElement = ShipZoneElement( shipZone=self, xMultiplier=0, yMultiplier=1 )
         shipZoneElements.append( shipZoneElement )
+        print('kokku tssone:', len(shipZoneElements))
         return shipZoneElements
 
     def getColor(self):
@@ -72,7 +75,7 @@ class ShipZone( RelativeLayout, HoverBehavior, ParentFinder ):
         self.draw()
 
     def on_enter(self):
-        print('enter shipzone', self, self.pos)
+        #print('enter shipzone', self, self.pos)
         pass
 
 #---------------------------------------------------------------------------------------------------------------
@@ -116,5 +119,5 @@ class ShipZoneElement( Widget, ParentFinder, HoverBehavior):
 
     def on_enter(self):
         #if self.parent != None and self.getGame().ownShipGridArea and self.parent.parent in self.getGame().ownShipGridArea.ships:
-        print('enter shipzoneelement', self, self.pos)
+        #print('enter shipzoneelement', self, self.pos)
         pass

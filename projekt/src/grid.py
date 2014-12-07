@@ -49,16 +49,26 @@ class Grid( GridLayout, ParentFinder):
 
     #def isShipInGridBounds(self, ship):
 
-    def isElementInGridBounds(self, elementToCheck): #fixme: this has hardcoded stuff (most likely wont work with the smaller grid version), because i couldnt get the proper position for the grid
+    def isElementInGridBounds(self, elementToCheck):
+        #fixme: this has hardcoded stuff (most likely wont work with the smaller grid version), because i couldnt get the proper position for the grid
         elementToCheckX = elementToCheck.to_window(elementToCheck.x, elementToCheck.y)[0]
         elementToCheckY = elementToCheck.to_window(elementToCheck.x, elementToCheck.y)[1]
-        gridBottomY = self.to_widget(self.x, self.y)[1]+100
-        gridTopY = 11*self.rowHeight
 
-        if elementToCheckY < gridBottomY or elementToCheckY>gridTopY or elementToCheckX < self.x+50 or 11*self.colWidth < elementToCheckX:
+        gridLeftX = self.getGridTopLeft()[0]
+        gridTopY = self.getGridTopLeft()[1]
+        gridRightX = self.getGridBottomRight()[0]
+        gridBottomY =  self.getGridBottomRight()[1]
+
+        if elementToCheckY < gridBottomY or elementToCheckY > gridTopY or elementToCheckX < gridLeftX or gridRightX < elementToCheckX:
             return False
         else:
             return True
+
+    def getGridTopLeft(self):
+        return self.getGridElementOnPosition('A',1).to_window(self.getGridElementOnPosition('A',1).x, self.getGridElementOnPosition('A',1).top)
+
+    def getGridBottomRight(self):
+        return self.getGridElementOnPosition('J',10).to_window(self.getGridElementOnPosition('J',10).right, self.getGridElementOnPosition('J',10).y)
 
     def addTestingButton(self):
         button = Button(text='XXX',size=(100,50),size_hint=(None,None), pos_hint= { 'center_x' : 0.5 })

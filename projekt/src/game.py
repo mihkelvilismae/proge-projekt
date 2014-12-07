@@ -19,8 +19,10 @@ class Game( Widget ):
     screen = None
     mainGrid = None
     shipPort = None
+
     battleArea = None
     ownShipGridArea = None
+
     allShipsOnGrid = BooleanProperty(False)
     activeArea = None
 
@@ -63,8 +65,8 @@ class Game( Widget ):
 
     def createShips(self, gridConfig):
         ships = []
-        shipsCountByLength = {1:4, 2:3, 3:2, 4:1}
         shipsCountByLength = {1:1, 4:1}
+        shipsCountByLength = {1:4, 2:3, 3:2, 4:1}
         shipsCountByLength = {1:1}
         for shipLength, shipCount in shipsCountByLength.items():
             for _ in range(0, shipCount):
@@ -150,13 +152,25 @@ class Game( Widget ):
         self.screen.gameScreenView.removeShipPort()
 
     # @testing
-    def testing(self):
+    def __testing(self):
         for ship in (self.ownShipGridArea.ships):
             print(ship)
             print('zonei päran', ship.shipZone)
             for shipZoneElement in ship.shipZone.shipZoneElements:
                 print('zonelemendi:', shipZoneElement, shipZoneElement.pos)
                 print('parent:', shipZoneElement.parent)
+    def testing(self):
+        print('-----------------TESTING START------------------------')
+        #print( self.battleArea.grid.to_window(*self.battleArea.grid.pos) )
+        #print( self.battleArea.grid.to_local(*self.battleArea.grid.pos) )
+        #print( self.battleArea.grid.to_parent(*self.battleArea.grid.pos) )
+        #print( self.battleArea.grid.to_widget(*self.battleArea.grid.pos) )
+
+        print( self.ownShipGridArea.grid.getGridElementOnPosition('A',1).x )
+        print( self.ownShipGridArea.grid.getGridElementOnPosition('A',1).top )
+        print( self.ownShipGridArea.grid.getGridElementOnPosition('J',10).right )
+        print( self.ownShipGridArea.grid.getGridElementOnPosition('J',10).y )
+        print('-----------------TESTING END------------------------')
 
     def _testing(self):
         print('-----------------TESTING START------------------------')
