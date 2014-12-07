@@ -2,3 +2,4 @@
 - viitamine game objektile läbi terve rakenduse
 
 - arusaamine objektide paigutamise kohta (shipzone'i jaoks kasutasin clocki, oleks pidanud saama ilma)
+- klassimuutjad refrensivad kõigil objektidle sama muutjat???

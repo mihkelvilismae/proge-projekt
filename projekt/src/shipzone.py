@@ -1,7 +1,6 @@
 __author__ = 'mihkel'
 from .behaviours import HoverBehavior
 from .parentFinder import ParentFinder
-from .grid import Grid
 from .views import BattleArea
 from .gameconfig import *
 
@@ -34,7 +33,6 @@ class ShipZone( RelativeLayout, HoverBehavior, ParentFinder ):
         self.clear_widgets()
         self.canvas.clear()
         self.pos=(-50, -50)
-        print(self.ship.getGrid(), 'window pos: ',self.ship.getGrid().to_window(self.ship.getGrid().x, self.ship.getGrid().y), 'size:', self.ship.getGrid().size)
         for shipZoneElement in self.createShipZoneElements():
             self.add_widget( shipZoneElement )
             shipZoneElement.draw()

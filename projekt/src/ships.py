@@ -27,6 +27,7 @@ import random
 #---------------------------------------------------------------------------------------------------
 #       @Ship
 #---------------------------------------------------------------------------------------------------
+
 class Ship( RelativeLayout, HoverBehavior, ParentFinder ):
     STATUS_WAITING_TO_BE_PICKED_UP = 'waitingToBePickedUp'
     STATUS_PLACED = 'placed'
@@ -46,12 +47,17 @@ class Ship( RelativeLayout, HoverBehavior, ParentFinder ):
     shipRectangles = []
     shipZone = None
 
+    #shipStateMatrixElements = []
+    #shipZoneStateMatrixElements = []
+
     def __init__(self, length=1, **kwargs):
         self.mainConfig = MainConfig()
         super().__init__(size_hint=(None,None), pos=self.position, size=self.calculateShipSize(length), **kwargs)
         self.length = length
         self.drawShip()
         self.bind(shipStatus=self.on_status)
+        self.shipStateMatrixElements = []
+        self.shipZoneStateMatrixElements = []
 
     def drawShip(self):
         self.clear_widgets()
@@ -140,6 +146,11 @@ class Ship( RelativeLayout, HoverBehavior, ParentFinder ):
 
     def calculateShipSize(self, shipLength):
         return (self.mainConfig.shipBlockWidth * shipLength, self.mainConfig.shipBlockHeight)
+
+    def on_pos(self, a,b):
+        print(self)
+        if self.getGame()!=None:
+            self.getGame().battleArea.mainGrid.gameState.removeShipFromGameStateMatrix(self)
 
 #---------------------------------------------------------------------------------------------------------------
 #   ShipElementRectangle

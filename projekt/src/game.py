@@ -40,6 +40,7 @@ class Game( Widget ):
         self.unselectShips( ship )
         self.selectedShip = ship
 
+
     #def onSelectedShipChange(self, instance, newValue):
     #    1
 
@@ -60,14 +61,15 @@ class Game( Widget ):
         self.shipPort.shipPiers[ship.length].addShip( ship )
 
     def canShipBePlaced(self, ship, battlefieldGridElement): #todo implement logic for out of borders etc
-        if isinstance( ship, Ship ) and battlefieldGridElement.getGameState().isShipPositionValid( ship, battlefieldGridElement ):
+        colChar = battlefieldGridElement.colChar
+        rowNr = battlefieldGridElement.rowNr
+        if isinstance( ship, Ship ) and battlefieldGridElement.getGameState().isShipPositionValid( ship, colChar, rowNr ):
             return True
         return False
 
 
 
     def placeShipToGrid(self, ship, battlefieldGridElement):
-
         #removes ship from port
         if ship.isInPort:
             ship.isInPort = False
@@ -79,7 +81,7 @@ class Game( Widget ):
         ship.placeShip( battlefieldGridElement.pos )
         self.setSelectedShip( ObjectProperty(None) )
         grid = battlefieldGridElement.getGrid()
-        grid.gameState.placeShipInGameStateMatrix( ship, battlefieldGridElement)
+        grid.gameState.placeShipInGameStateMatrix( ship, battlefieldGridElement.colChar, battlefieldGridElement.rowNr )
 
         #def drawZone(dt):
         #    ship.addZone()
@@ -115,7 +117,8 @@ class Game( Widget ):
         #print(self.testingMainGrid.gameState.getStateOnAreaCoordinates('A',2))
         #print(self.testingMainGrid.gameState.printGameStateMatrix())
         self.testingMainGrid.gameState.generateSimplifiedMatrix()
-        #for ship in self.ships:
+        for ship in self.ships:
+             print(ship)
         #    ship.addZone()
             #ship.shipZone.draw()
         #for rect in ship.shipRectangles:
