@@ -74,6 +74,11 @@ class GameScreenView( BoxLayout ):
         self.addWidgetToGameScreenView( self.game.ownShipGridArea )
         self.game.ownShipGridArea.draw(2)
 
+    def drawEnemyShipGridArea(self):
+        self.game.enemyShipGridArea = BattleArea()
+        self.addWidgetToGameScreenView( self.game.enemyShipGridArea )
+        self.game.enemyShipGridArea.draw(1)
+
     def drawShipPort(self):
         self.game.shipPort = ShipPort(game=self.game)
         self.addWidgetToGameScreenView( self.game.shipPort )

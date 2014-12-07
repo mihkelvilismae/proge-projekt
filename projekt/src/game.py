@@ -22,6 +22,7 @@ class Game( Widget ):
 
     battleArea = None
     ownShipGridArea = None
+    enemyShipGridArea = None
 
     allShipsOnGrid = BooleanProperty(False)
     activeArea = None
@@ -43,9 +44,13 @@ class Game( Widget ):
         serializedGameState = self.testingMainGrid.gameState.getGameStateMatrixSerialized()
         self.screen.gameScreenView.remove_widget( self.screen.gameScreenView.startingButton )
         self.screen.gameScreenView.drawOwnShipGridArea()
+
         def populateGridFromSerializedGameState(dt): #fixme: why is the clock required, how can i do it without it :S
             self.populateGridFromSerializedGameState( self.ownShipGridArea.grid, serializedGameState )
         Clock.schedule_once(populateGridFromSerializedGameState, 0)
+
+
+
 
     def populateGridFromSerializedGameState(self, grid, serializedGameState):
         ships = self.createShips( grid.gridConfig )
@@ -161,15 +166,7 @@ class Game( Widget ):
                 print('parent:', shipZoneElement.parent)
     def testing(self):
         print('-----------------TESTING START------------------------')
-        #print( self.battleArea.grid.to_window(*self.battleArea.grid.pos) )
-        #print( self.battleArea.grid.to_local(*self.battleArea.grid.pos) )
-        #print( self.battleArea.grid.to_parent(*self.battleArea.grid.pos) )
-        #print( self.battleArea.grid.to_widget(*self.battleArea.grid.pos) )
 
-        print( self.ownShipGridArea.grid.getGridElementOnPosition('A',1).x )
-        print( self.ownShipGridArea.grid.getGridElementOnPosition('A',1).top )
-        print( self.ownShipGridArea.grid.getGridElementOnPosition('J',10).right )
-        print( self.ownShipGridArea.grid.getGridElementOnPosition('J',10).y )
         print('-----------------TESTING END------------------------')
 
     def _testing(self):

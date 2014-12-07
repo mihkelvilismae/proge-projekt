@@ -34,8 +34,6 @@ class ShipZone( RelativeLayout, HoverBehavior, ParentFinder ):
         self.bind(zoneStatus=self.on_zoneStatus)
 
     def draw(self):
-        print('-------------------------------------------------------------------------------------------------------------------------------------------------------------------')
-        print('-------------------------------------------------------------------------------------------------------------------------------------------------------------------')
         self.clear_widgets()
         self.canvas.clear()
         self.pos=(-self.gridConfig.battlefieldRectangleSize[0],-self.gridConfig.battlefieldRectangleSize[1])
@@ -60,7 +58,6 @@ class ShipZone( RelativeLayout, HoverBehavior, ParentFinder ):
         shipZoneElements.append( shipZoneElement )
         shipZoneElement = ShipZoneElement( shipZone=self, xMultiplier=0, yMultiplier=1 )
         shipZoneElements.append( shipZoneElement )
-        print('kokku tssone:', len(shipZoneElements))
         return shipZoneElements
 
     def getColor(self):
