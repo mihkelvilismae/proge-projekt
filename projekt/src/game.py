@@ -128,10 +128,10 @@ class Game( Widget ):
         print('-----------------TESTING START------------------------')
         #print(self.testingMainGrid.gameState.getStateOnAreaCoordinates('A',2))
         #print(self.testingMainGrid.gameState.printGameStateMatrix())
-        self.testingMainGrid.gameState.generateSimplifiedMatrix()
-        for ship in self.ships:
-             if ship.length==4:
-                print(ship)
+        self.testingMainGrid.gameState.getGameStateMatrixSerialized()
+        #for ship in self.ships:
+        #     if ship.length==4:
+        #        print(ship)
         #    ship.addZone()
             #ship.shipZone.draw()
         #for rect in ship.shipRectangles:

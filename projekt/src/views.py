@@ -78,6 +78,8 @@ class GameScreenView( BoxLayout ):
         self.startingButton.bind(on_press=self.game.startBattle)
         self.addWidgetToGameScreenView( self.startingButton )
 
+    #def
+
     def removeShipPort(self):
         self.remove_widget( self.game.shipPort )
 

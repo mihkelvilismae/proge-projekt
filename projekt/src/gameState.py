@@ -91,6 +91,14 @@ class GameStateMatrix():
             colChar = self.incrementChar( colChar )
         return True
 
+    def getGameStateMatrixSerialized(self):
+        serializedStatus = { 'ships': {}}
+        for ship in self.ships:
+            if ship.length not in serializedStatus['ships']:
+                serializedStatus['ships'][ship.length]  = []
+            serializedStatus['ships'][ship.length].append( {'startColChar':ship.startColChar, 'startRowNr':ship.startRowNr, 'direction':ship.direction })
+        return serializedStatus
+
 
 #----------------------------------------------------------------------------------------------------------------
 #   GameState
@@ -104,6 +112,7 @@ class GameState( GameStateMatrix ):
 
     def __init__(self, grid):
         self.grid = grid
+        self.ships = []
 
     def createGameStateMatrix(self):
         for rowNr, rowElements in self.grid.gridElements.items():

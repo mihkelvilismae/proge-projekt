@@ -19,11 +19,15 @@ class GameStateMatrixElement():
         self.colChar = colChar
 
     def addShip(self, ship):
+        if ship not in self.gameState.ships:
+            self.gameState.ships.append( ship )
         self.ship = ship
         self.addChild( ship )
         ship.shipStateMatrixElements.append( self )
 
     def removeShip(self):
+        if self.ship in self.gameState.ships:
+            self.gameState.ships.remove( self.ship )
         self.ship.shipStateMatrixElements.remove(self)
         self.childrenStates.remove(self.ship)
         self.ship = None
