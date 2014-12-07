@@ -2,7 +2,7 @@ __author__ = 'mihkel'
 from .gameconfig import MainConfig
 from .gameStateMatrixElement import GameStateMatrixElement
 
-
+from kivy.properties import StringProperty, ObjectProperty, BooleanProperty, ListProperty, DictProperty
 import collections
 #----------------------------------------------------------------------------------------------------------------
 #   GameStateMatrix
@@ -108,9 +108,8 @@ class GameState( GameStateMatrix ):
     STATE_EMPTY = 'empty'
     STATE_SHIPZONE = 'shipzone'
 
-    gameStateMatrix = collections.OrderedDict()
-
     def __init__(self, grid):
+        self.gameStateMatrix = collections.OrderedDict()
         self.grid = grid
         self.ships = []
 

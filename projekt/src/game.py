@@ -7,7 +7,7 @@ from .views import BattleArea
 
 from kivy.clock import Clock
 from kivy.uix.widget import Widget
-from kivy.properties import StringProperty, ObjectProperty, BooleanProperty, ListProperty
+from kivy.properties import StringProperty, ObjectProperty, BooleanProperty, ListProperty, DictProperty
 #---------------------------------------------------------------------------------------------------
 #       @Game
 #---------------------------------------------------------------------------------------------------
@@ -38,6 +38,7 @@ class Game( Widget ):
         self.setupShipsInPort( ships )
 
     def startBattle(self, instance):
+        self.testing()
         serializedGameState = self.testingMainGrid.gameState.getGameStateMatrixSerialized()
         self.screen.gameScreenView.remove_widget( self.screen.gameScreenView.startingButton )
         self.screen.gameScreenView.drawOwnShipGridArea()
@@ -49,7 +50,6 @@ class Game( Widget ):
             shipStatusInfo = serializedGameState['ships'][ship.length].pop()
             ship.direction = shipStatusInfo['direction']
             self.placeShipToGrid( ship, grid.getGridElementOnPosition(shipStatusInfo['startColChar'], shipStatusInfo['startRowNr']) )
-        pass
 
     def setSelectedShip(self, ship):
         self.unselectShips( ship )
@@ -152,7 +152,13 @@ class Game( Widget ):
         print('-----------------TESTING START------------------------')
         #print(self.testingMainGrid.gameState.getStateOnAreaCoordinates('A',2))
         #print(self.testingMainGrid.gameState.printGameStateMatrix())
-        self.testingMainGrid.gameState.getGameStateMatrixSerialized()
+        print('BATTLEAREA-----------------------------------')
+        self.battleArea.grid.gameState.generateSimplifiedMatrix()
+        print(id(self.battleArea.grid.gameState))
+        if self.ownShipGridArea:
+            print('ownShipGridArea -----------------------------------')
+            print(id(self.ownShipGridArea.grid.gameState))
+            self.ownShipGridArea.grid.gameState.generateSimplifiedMatrix()
         #for ship in self.ships:
         #     if ship.length==4:
         #        print(ship)
