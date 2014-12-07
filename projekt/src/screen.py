@@ -10,6 +10,7 @@ class Screen( Widget ):
     game = None
     config = None
     MainMenuView = None
+    gameScreenView = None
 
     def __init__(self, game=game, **kwargs):
         self.game = game

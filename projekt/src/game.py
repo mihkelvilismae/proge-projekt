@@ -3,6 +3,7 @@ __author__ = 'mihkel'
 from .ships import Ship
 from .grid import Grid
 from .gameconfig import MainConfig
+from .views import BattleArea
 
 from kivy.clock import Clock
 from kivy.uix.widget import Widget
@@ -38,7 +39,17 @@ class Game( Widget ):
 
     def startBattle(self, instance):
         serializedGameState = self.testingMainGrid.gameState.getGameStateMatrixSerialized()
-        print(serializedGameState)
+        self.screen.gameScreenView.remove_widget( self.screen.gameScreenView.startingButton )
+        self.screen.gameScreenView.drawOwnShipGridArea()
+        self.populateGridFromSerializedGameState( self.ownShipGridArea.grid, serializedGameState )
+
+    def populateGridFromSerializedGameState(self, grid, serializedGameState):
+        ships = self.createShips()
+        for ship in ships:
+            shipStatusInfo = serializedGameState['ships'][ship.length].pop()
+            ship.direction = shipStatusInfo['direction']
+            self.placeShipToGrid( ship, grid.getGridElementOnPosition(shipStatusInfo['startColChar'], shipStatusInfo['startRowNr']) )
+        pass
 
     def setSelectedShip(self, ship):
         self.unselectShips( ship )
@@ -52,6 +63,7 @@ class Game( Widget ):
         ships = []
         shipsCountByLength = {1:4, 2:3, 3:2, 4:1}
         shipsCountByLength = {1:1, 4:1}
+        shipsCountByLength = {1:1}
         for shipLength, shipCount in shipsCountByLength.items():
             for _ in range(0, shipCount):
                 ship = Ship( shipLength )
@@ -65,6 +77,7 @@ class Game( Widget ):
             self.placeShipToPort( ship )
 
     def placeShipToPort(self, ship):
+        ship.isInPort = True
         self.shipPort.shipPiers[ship.length].addShip( ship )
 
     def canShipBePlaced(self, ship, battlefieldGridElement): #todo implement logic for out of borders etc
@@ -84,11 +97,15 @@ class Game( Widget ):
 
     def placeShipToGrid(self, ship, battlefieldGridElement):
         ship.temporarilyRemovedFromMatrix = False
+
         #removes ship from port
         if ship.isInPort:
             ship.isInPort = False
             ship.shipPier.removeShip( ship )
-            self.battleArea.add_widget( ship )
+
+        if ship.getParentByClass(BattleArea)==None:
+            battleArea = battlefieldGridElement.getGrid().getParentByClass( BattleArea )
+            battleArea.add_widget( ship )
             ship.drawShip()
 
         ship.shipStatus = ship.STATUS_PLACED

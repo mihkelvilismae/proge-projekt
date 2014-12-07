@@ -33,7 +33,7 @@ class Ship( RelativeLayout, HoverBehavior, ParentFinder ):
     STATUS_PLACED = 'placed'
     STATUS_SELECTED = 'selected'
 
-    isInPort = True
+    isInPort = False
 
     DIRECTION_HORIZONTAL = 'H'
     DIRECTION_VERTICAL = 'V'

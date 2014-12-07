@@ -94,6 +94,9 @@ class Grid( GridLayout, ParentFinder):
         position = (self.gridConfig.battlefieldRectangleSize[0] * rowNr, self.gridConfig.battlefieldRectangleSize[1] * colNr)
         return position
 
+    def getGridElementOnPosition(self, colChar, rowNr):
+        return self.gridElements[ rowNr ][ colChar ]
+
 #---------------------------------------------------------------------------------------------------
 #       Grid Elements
 #---------------------------------------------------------------------------------------------------

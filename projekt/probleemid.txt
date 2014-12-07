@@ -1,5 +1,6 @@
 - asjade korrektne importimine
 - viitamine game objektile läbi terve rakenduse
+- asjadele läbi rakenduse samade nimedega viitamine (ntx shipArea, shipPosition = A3)
 
 - arusaamine objektide paigutamise kohta (shipzone'i jaoks kasutasin clocki, oleks pidanud saama ilma)
 - klassimuutjad refrensivad kõigil objektidle sama muutjat???
