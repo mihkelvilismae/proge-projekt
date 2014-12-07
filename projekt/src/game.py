@@ -14,12 +14,14 @@ game = None #FIXME: SEE BELOW IN MAIN APP
 
 class Game( Widget ):
     selectedShip = ObjectProperty(None)
-    ships = list()
+    shipsx = list()
     screen = None
     mainGrid = None
     shipPort = None
     battleArea = None
+    ownShipGridArea = None
     allShipsOnGrid = BooleanProperty(False)
+    activeArea = None
 
     testingMainGrid = None #fixme: remove this later
     #gameState = None
@@ -30,11 +32,13 @@ class Game( Widget ):
 
     def startGame(self):
         self.screen.drawGameScreenView()
-        self.createShips()
-        self.setupShipsInPort()
+        ships = self.createShips()
+        self.activeArea.ships = ships
+        self.setupShipsInPort( ships )
 
     def startBattle(self, instance):
-        pass
+        serializedGameState = self.testingMainGrid.gameState.getGameStateMatrixSerialized()
+        print(serializedGameState)
 
     def setSelectedShip(self, ship):
         self.unselectShips( ship )
@@ -45,16 +49,19 @@ class Game( Widget ):
     #    1
 
     def createShips(self):
-        shipsCountByLength = {1:1}
+        ships = []
         shipsCountByLength = {1:4, 2:3, 3:2, 4:1}
+        shipsCountByLength = {1:1, 4:1}
         for shipLength, shipCount in shipsCountByLength.items():
             for _ in range(0, shipCount):
                 ship = Ship( shipLength )
                 ship.game = self
-                self.ships.append( ship )
+                #self.ships.append( ship )
+                ships.append( ship )
+        return ships
 
-    def setupShipsInPort(self):
-        for ship in self.ships:
+    def setupShipsInPort(self, ships):
+        for ship in ships:
             self.placeShipToPort( ship )
 
     def placeShipToPort(self, ship):
@@ -112,7 +119,7 @@ class Game( Widget ):
         gridElement.bombard()
 
     def unselectShips(self, shipNotToUnselect=None):
-        for ship in self.ships:
+        for ship in self.activeArea.ships:
             if ship!=shipNotToUnselect:
                 if ship.temporarilyRemovedFromMatrix == True:
                     ship.temporarilyRemovedFromMatrix = False

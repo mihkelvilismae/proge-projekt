@@ -74,7 +74,7 @@ class Ship( RelativeLayout, HoverBehavior, ParentFinder ):
             self.shipRectangles.append( elementRectangle )
 
     def getGrid(self):
-        return self.getParentByClass( BattleArea ).mainGrid
+        return self.getParentByClass( BattleArea ).grid
 
 # EVENT BINDINGS (start):
     def on_status(self, instance, pos): #this fires when the status changes
@@ -153,7 +153,7 @@ class Ship( RelativeLayout, HoverBehavior, ParentFinder ):
 
     def on_pos(self, a,b):
         if self.getGame()!=None:
-            self.getGame().battleArea.mainGrid.gameState.removeShipFromGameStateMatrix(self)
+            self.getGame().battleArea.grid.gameState.removeShipFromGameStateMatrix(self)
 
 #---------------------------------------------------------------------------------------------------------------
 #   ShipElementRectangle

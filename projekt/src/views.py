@@ -65,8 +65,14 @@ class GameScreenView( BoxLayout ):
 
     def drawBattleArea(self):
         self.game.battleArea = BattleArea()
+        self.game.activeArea = self.game.battleArea
         self.addWidgetToGameScreenView( self.game.battleArea )
-        self.game.battleArea.draw()
+        self.game.battleArea.draw(1)
+
+    def drawOwnShipGridArea(self):
+        self.game.ownShipGridArea = BattleArea()
+        self.addWidgetToGameScreenView( self.game.ownShipGridArea )
+        self.game.ownShipGridArea.draw(2)
 
     def drawShipPort(self):
         self.game.shipPort = ShipPort(game=self.game)
@@ -87,20 +93,15 @@ class GameScreenView( BoxLayout ):
 #       BattleArea
 #---------------------------------------------------------------------------------------------------
 class BattleArea( RelativeLayout ):
+    grid = None
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
-    def draw(self):
-        self.drawMainGrid()
+    def draw(self, sizeMultiplier):
+        self.drawGrid( sizeMultiplier )
 
-    def drawSmallerGrid(self): #todo: can be joined with drawMainGrid()?
-        self.smallerGrid = Grid(sizeMultiplier=2)
-        self.add_widget( self.smallerGrid )
-        self.smallerGrid.addGridElements()
-
-    def drawMainGrid(self):
-        self.mainGrid = Grid(sizeMultiplier=1)
-        self.parent.mainGrid = self.mainGrid
-        self.add_widget( self.mainGrid )
-        self.mainGrid.draw()
-        #self.mainGrid.addGridElements()
+    def drawGrid(self, sizeMultiplier):
+        self.grid = Grid(sizeMultiplier=sizeMultiplier)
+        #self.parent.mainGrid = self.mainGrid
+        self.add_widget( self.grid )
+        self.grid.draw()
