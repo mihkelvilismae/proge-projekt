@@ -46,6 +46,9 @@ class Ship( RelativeLayout, HoverBehavior, ParentFinder ):
     shipPier = None
     shipRectangles = []
     shipZone = None
+    startRowNr = int
+    startColChar = str
+    temporarilyRemovedFromMatrix = False
 
     #shipStateMatrixElements = []
     #shipZoneStateMatrixElements = []
@@ -78,6 +81,7 @@ class Ship( RelativeLayout, HoverBehavior, ParentFinder ):
         if self.shipStatus==self.STATUS_SELECTED:
             self.color = Color(1,0,1)
             self.game.setSelectedShip(self)
+            self.getGame().temporarilyRemoveShipFromMatrix(self)
         elif self.shipStatus==self.STATUS_WAITING_TO_BE_PICKED_UP:
             self.color = Color(1,1,0)
         elif self.shipStatus==self.STATUS_PLACED:

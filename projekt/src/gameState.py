@@ -123,6 +123,7 @@ class GameState( GameStateMatrix ):
         for shipStateMatrixElement in ship.shipStateMatrixElements.copy():
             shipStateMatrixElement.removeShip()
         for shipZoneStateMatrixElement in ship.shipZoneStateMatrixElements.copy():
+            ship.shipZoneStateMatrixElements = []
             shipZoneStateMatrixElement.removeChild(self.STATE_SHIPZONE)
 
 

@@ -67,9 +67,16 @@ class Game( Widget ):
             return True
         return False
 
+    def temporarilyRemoveShipFromMatrix(self, ship):
+        if ship.isInPort==False:
+            ship.temporarilyRemovedFromMatrix = True
+            ship.getGrid().gameState.removeShipFromGameStateMatrix( ship )
+        #    ship.shipStateMatrixElementsTemp = ship.shipStateMatrixElements.copy()
+        #    ship.shipStateMatrixElementsTemp = ship.shipStateMatrixElements.copy()
 
 
     def placeShipToGrid(self, ship, battlefieldGridElement):
+        ship.temporarilyRemovedFromMatrix = False
         #removes ship from port
         if ship.isInPort:
             ship.isInPort = False
@@ -79,6 +86,8 @@ class Game( Widget ):
 
         ship.shipStatus = ship.STATUS_PLACED
         ship.placeShip( battlefieldGridElement.pos )
+        ship.startColChar = battlefieldGridElement.colChar
+        ship.startRowNr = battlefieldGridElement.rowNr
         self.setSelectedShip( ObjectProperty(None) )
         grid = battlefieldGridElement.getGrid()
         grid.gameState.placeShipInGameStateMatrix( ship, battlefieldGridElement.colChar, battlefieldGridElement.rowNr )
@@ -105,6 +114,9 @@ class Game( Widget ):
     def unselectShips(self, shipNotToUnselect=None):
         for ship in self.ships:
             if ship!=shipNotToUnselect:
+                if ship.temporarilyRemovedFromMatrix == True:
+                    ship.temporarilyRemovedFromMatrix = False
+                    ship.getGrid().gameState.placeShipInGameStateMatrix( ship, ship.startColChar, ship.startRowNr )
                 ship.shipStatus = ship.STATUS_WAITING_TO_BE_PICKED_UP
 
     def onAllShipsOnGrid(self, instance, pos):
