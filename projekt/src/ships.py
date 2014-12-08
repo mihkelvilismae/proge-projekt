@@ -97,8 +97,10 @@ class Ship( RelativeLayout, HoverBehavior, ParentFinder ):
         elif self.shipStatus==self.STATUS_WAITING_TO_BE_PICKED_UP:
             self.color = Color(1,1,0)
         elif self.shipStatus==self.STATUS_PLACED:
-            self.addZone()
             self.color = Color(0,1,1)
+            if self.getGrid().sizeMultiplier==2:
+                self.color = Color(0,1,1, 0.5)
+            self.addZone()
 
         self.drawShip()
 
@@ -182,13 +184,12 @@ class ShipElementRectangle( Widget, HoverBehavior, ParentFinder ):
         super().__init__(size_hint=(None,None), pos=elementPosition, **kwargs)
         self.ship = ship
 
-
      def draw(self):
          #grid = self.getParentByClass(Grid)
          #size = grid.gridConfig().gridElementSize
          self.size=self.parent.gridConfig.shipBlockSize
          self.canvas.clear()
-         elementRectangle = Rectangle(pos=self.pos, size=self.size)
+         elementRectangle = Rectangle(pos=(self.pos[0]+4,self.pos[1]+4), size=self.size) #todo: pos shoudl come from conf
          self.canvas.add( self.ship.color )
          self.canvas.add( elementRectangle )
          #self.ship.shipRectangles.append( elementRectangle )

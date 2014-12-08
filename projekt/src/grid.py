@@ -4,6 +4,7 @@ from .behaviours import HoverBehavior
 from .gameconfig import GridConfig
 from .gameState import GameState
 from .parentFinder import ParentFinder
+from .battleStatus import BattleStatus
 
 import collections
 from kivy.app import App
@@ -50,10 +51,7 @@ class Grid( GridLayout, ParentFinder):
         self.addGridElements()
         self.gameState.createGameStateMatrix()
 
-    #def isShipInGridBounds(self, ship):
-
     def isElementInGridBounds(self, elementToCheck):
-        #fixme: this has hardcoded stuff (most likely wont work with the smaller grid version), because i couldnt get the proper position for the grid
         elementToCheckX = elementToCheck.to_window(elementToCheck.x, elementToCheck.y)[0]
         elementToCheckY = elementToCheck.to_window(elementToCheck.x, elementToCheck.y)[1]
 
@@ -128,6 +126,7 @@ class GridBattlefieldElement( GridElement ):
     rowNr = None
     colChar = None
     isBombed = False
+    isLocked = False
 
     def __init__(self, gridConfig, rowNr, colChar, **kwargs):
         self.rowNr = rowNr
@@ -145,24 +144,33 @@ class GridBattlefieldElement( GridElement ):
         self.remove_widget( self.tooltipRectangle )
 
     def addPointerRectangle(self):
-        ##print'addponter')
-        self.tooltipRectangle = PointerRectangle( self.gridConfig )
+        canShipBePlaced = self.getGame().selectedShip!=None and self.getGame().canShipBePlaced(self.getGame().selectedShip, self)
+        canBombard = self.getGame().canGridElementBeBombarded(self)
+        if  canShipBePlaced or canBombard:
+            tooltipRectangleColor = Color(0, 1, 0, .5)
+        else:
+            tooltipRectangleColor = Color(1, 0, 0, .5)
+        self.tooltipRectangle = PointerRectangle( self.gridConfig, tooltipRectangleColor )
         self.add_widget( self.tooltipRectangle )
 
     def calculateElementRectanglePosition(self):
         return (5, 5)
 
-    def bombard(self):
-        #elementRectangle = Rectangle( pos_hint=(None,None), size=self.gridConfig.battlefieldRectangleSize, pos=self.calculateElementRectanglePosition() )
-        #line = Line(points=[0,50], width=10)
-        #self.canvas.add(Color(50,50,50))
-        #self.canvas.add( line )
+    def bombard(self, bombardmentResult):
         self.isBombed = True
         self.canvas.clear()
-        elementRectangle = Rectangle( size_hint=(None,None), size=self.gridConfig.battlefieldRectangleSize, pos=self.calculateElementRectanglePosition() )
-        self.canvas.add( Color(1,0,0) )
-        self.canvas.add( elementRectangle )
-
+        if bombardmentResult==BattleStatus.BOMBARD_RESULT_HIT:
+            hitRectangleSize = (self.gridConfig.battlefieldRectangleSize[0]/2, self.gridConfig.battlefieldRectangleSize[1]/2)
+            elementRectangle = Rectangle( size_hint=(None,None), size=hitRectangleSize, pos=self.calculateElementRectanglePosition() )
+            self.canvas.add( Color(1,0,0) )
+            self.canvas.add( elementRectangle )
+        elif bombardmentResult==BattleStatus.BOMBARD_RESULT_MISS:
+            elementRectangle = Rectangle( size_hint=(None,None), size=self.gridConfig.battlefieldRectangleSize, pos=self.calculateElementRectanglePosition() )
+            self.canvas.add( Color(0.7, 0.7, 0.7, 0.5), )
+            self.canvas.add( elementRectangle )
+        elif bombardmentResult==BattleStatus.BOMBARD_RESULT_ENEMY_BOMBED_MY_GRID: #this shouldnt be here
+            self.add_widget( Label(text='X', font_size='30sp',pos=(4,0)))
+        self.canvas.add( Color(1,1,1) ) #i dont know why this is necessary
 
 # EVENT BINDINGS (start):
     def on_touch_down(self, touch): #this fires on the event that someone clicks on the grid
@@ -197,10 +205,10 @@ class GridLabelElement( GridElement ):
 #   POINTERS
 #------------------------------------------------------------------------------------------------------------
 class PointerRectangle( Widget ):
-    def __init__(self, gridConfig, **kwargs):
+    def __init__(self, gridConfig, color, **kwargs):
         super().__init__( **kwargs)
         #tooltipRectangleColor = Color(1, 0, 0, .5, mode='rgba')
-        tooltipRectangleColor = Color(1, 0, 0, .5)
+        tooltipRectangleColor = color
         self.canvas.add( tooltipRectangleColor )
         tooltipRectangle = Rectangle(size=gridConfig.battlefieldRectangleSize, pos=[5,5])
         self.canvas.add( tooltipRectangle )

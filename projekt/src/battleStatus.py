@@ -5,6 +5,7 @@ class BattleStatus():
     BOMBARD_RESULT_HIT = 'hit'
     BOMBARD_RESULT_SUNK = 'sunk'
     BOMBARD_RESULT_MISS = 'miss'
+    BOMBARD_RESULT_ENEMY_BOMBED_MY_GRID = 'enemyBombed'
     #BOMBARD_SPECIAL_RESULT_GAME_OVER = 'gameOver'
 
     enemyShipsInfo = []
@@ -38,8 +39,6 @@ class BattleStatus():
 
     def removeShipFromBattleStatus(self, shipId):
         self.enemyShipsInfo['ships'].pop( shipId )
-    #def getShipPositionsByShip(self, shipId):
-    #    return self.enemyShipsInfo['positionsByShip'][shipId]
 
     def getShip(self, shipId):
         return self.enemyShipsInfo[ 'ships' ][ shipId ]

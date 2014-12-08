@@ -1,6 +1,6 @@
 import kivy
 #kivy.require('1.0.6') # replace with your current kivy version !
-from src.gameconfig import *
+#from src.gameonfig import *
 
 from src.game import Game
 from src.gameconfig import MainConfig, GridConfig
