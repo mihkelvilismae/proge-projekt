@@ -1,0 +1,12 @@
+- asjade korrektne importimine
+- viitamine game objektile läbi terve rakenduse
+- asjadele läbi rakenduse samade nimedega viitamine (ntx shipArea, shipPosition = A3)
+
+- arusaamine objektide paigutamise kohta (shipzone'i jaoks kasutasin clocki, oleks pidanud saama ilma)
+- klassimuutjad refrensivad kõigil objektidle sama muutjat???
+
+TODO:
+laevade paigutamisel ei saa "laeva selectida" ja siis "panna laev enda vana ala sisse"
+
+head asjad:
+- kui teed funkstiooni, mis nõuab ka mingit eelnevat kontrolli, siis deklareeri kontrollfunktsioon ära (lihtsalt "return true") ja kirjuta kontroll koodi sisse kohe
