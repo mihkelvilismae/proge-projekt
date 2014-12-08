@@ -24,12 +24,14 @@ class GameStateMatrixElement():
         self.ship = ship
         self.addChild( ship )
         ship.shipStateMatrixElements.append( self )
+        ship.shipPositions.add((self.colChar, self.rowNr))
 
     def removeShip(self):
         if self.ship in self.gameState.ships:
             self.gameState.ships.remove( self.ship )
         self.ship.shipStateMatrixElements.remove(self)
         self.childrenStates.remove(self.ship)
+        self.ship.shipPositions.remove((self.colChar, self.rowNr))
         self.ship = None
 
     def getCountOfZones(self):

@@ -1,6 +1,7 @@
 __author__ = 'mihkel'
 
 from .ships import Ship
+from .battleStatus import BattleStatus
 from .grid import Grid
 from .gameconfig import MainConfig
 from .views import GridArea
@@ -15,10 +16,9 @@ game = None #FIXME: SEE BELOW IN MAIN APP
 
 class Game( Widget ):
     selectedShip = ObjectProperty(None)
-    shipsx = list()
     screen = None
-    mainGrid = None
-    shipPort = None
+    shipPort = ObjectProperty(None)
+    battleStatus = None
 
     shipPlacementArea = None
     ownShipGridArea = None
@@ -27,7 +27,7 @@ class Game( Widget ):
     allShipsOnGrid = BooleanProperty(False)
     activeArea = None
 
-    testingMainGrid = None #fixme: remove this later
+    #testingMainGrid = None #fixme: remove this later
     #gameState = None
 
     def __init__(self, **kwargs):
@@ -36,29 +36,80 @@ class Game( Widget ):
 
     def startGame(self):
         self.screen.drawGameScreenView()
+        self.allowPlacement( self.shipPlacementArea.grid )
         ships = self.createShips( self.shipPlacementArea.grid.gridConfig )
         self.activeArea.ships = ships
         self.setupShipsInPort( ships )
 
     def startBattle(self, instance):
-        serializedGameState = self.testingMainGrid.gameState.getGameStateMatrixSerialized()
-        self.screen.gameScreenView.remove_widget( self.screen.gameScreenView.startingButton )
+        self.unselectShips()
+        serializedGameState = self.shipPlacementArea.grid.gameState.getGameStateMatrixSerialized()
+        print(serializedGameState)
+        self.battleStatus = BattleStatus( serializedGameState )
+        self.screen.gameScreenView.removeWidgetFromGameScreenView( self.screen.gameScreenView.startingButton )
+        self.screen.gameScreenView.removeWidgetFromGameScreenView( self.shipPlacementArea )
+        self.screen.gameScreenView.drawEnemyShipGridArea()
         self.screen.gameScreenView.drawOwnShipGridArea()
+        self.allowBombardment( self.enemyShipGridArea.grid )
+
+        self.screen.gameScreenView.drawShipPort()
+        self.shipPort.isSelectShipsAllowed = False
+        self.populateEnemyPort()
+
+        print('luukas see shpport', self.shipPort, self.shipPort.isSelectShipsAllowed)
+
 
         def populateGridFromSerializedGameState(dt): #fixme: why is the clock required, how can i do it without it :S
             self.populateGridFromSerializedGameState( self.ownShipGridArea.grid, serializedGameState )
         Clock.schedule_once(populateGridFromSerializedGameState, 0)
 
 
+    def disallowBombardment(self, grid):
+        grid.isBombardmentAllowed = False
+    def allowBombardment(self, grid):
+        grid.isBombardmentAllowed = True
+    def disallowPlacement(self, grid):
+        grid.isPlacementAllowed = False
+    def allowPlacement(self, grid):
+        grid.isPlacementAllowed = True
 
+    def canGridElementBeBombarded(self, gridElement):
+        if gridElement.isBombed == False and gridElement.getGrid().isBombardmentAllowed==True:
+            return True
+
+    def bombardGrid(self, gridElement):
+        bombardResult = self.battleStatus.bombardGrid( gridElement.colChar, gridElement.rowNr)
+        if bombardResult['result']==BattleStatus.BOMBARD_RESULT_HIT:
+            print('XXXXX PROCESS HIT')
+        elif bombardResult['result']==BattleStatus.BOMBARD_RESULT_MISS:
+            print('XXXXX PROCESS miss')
+        else: #a ship is sunk
+            self.putSunkShipOnEnemyGrid( bombardResult['sunkship'] )
+            if bombardResult['gameOver']==True:
+                self.endGame()
+        gridElement.bombard()
+
+    def endGame(self):
+        self.disallowBombardment( self.enemyShipGridArea.grid )
+        self.screen.gameScreenView.drawGameOverText()
+
+    def populateEnemyPort(self):
+        ships = self.createShips( self.enemyShipGridArea.grid.gridConfig )
+        self.setupShipsInPort( ships )
 
     def populateGridFromSerializedGameState(self, grid, serializedGameState):
         ships = self.createShips( grid.gridConfig )
         grid.getParentByClass(GridArea).ships = ships
         for ship in ships:
-            shipStatusInfo = serializedGameState['ships'][ship.length].pop()
+            shipStatusInfo = serializedGameState['shipsByLength'][ship.length].pop()
             ship.direction = shipStatusInfo['direction']
             self.placeShipToGrid( ship, grid.getGridElementOnPosition(shipStatusInfo['startColChar'], shipStatusInfo['startRowNr']) )
+
+    def canSelectShip(self, ship):
+        if ship.isInPort:
+            return ship.getShipPort().isSelectShipsAllowed
+        else:
+            return ship.getGrid().isPlacementAllowed
 
     def setSelectedShip(self, ship):
         self.unselectShips( ship )
@@ -70,8 +121,9 @@ class Game( Widget ):
 
     def createShips(self, gridConfig):
         ships = []
-        shipsCountByLength = {1:1, 4:1}
         shipsCountByLength = {1:4, 2:3, 3:2, 4:1}
+        shipsCountByLength = {1:4}
+        shipsCountByLength = {1:1, 4:1}
         shipsCountByLength = {1:1}
         for shipLength, shipCount in shipsCountByLength.items():
             for _ in range(0, shipCount):
@@ -83,6 +135,7 @@ class Game( Widget ):
 
     def setupShipsInPort(self, ships):
         for ship in ships:
+            print('placeShipToPort')
             self.placeShipToPort( ship )
 
     def placeShipToPort(self, ship):
@@ -90,6 +143,8 @@ class Game( Widget ):
         self.shipPort.shipPiers[ship.length].addShip( ship )
 
     def canShipBePlaced(self, ship, battlefieldGridElement): #todo implement logic for out of borders etc
+        if battlefieldGridElement.getGrid().isPlacementAllowed==False:
+            return False
         colChar = battlefieldGridElement.colChar
         rowNr = battlefieldGridElement.rowNr
         if isinstance( ship, Ship ) and battlefieldGridElement.getGameState().isShipPositionValid( ship, colChar, rowNr ):
@@ -137,12 +192,10 @@ class Game( Widget ):
     def rotateShip(self, ship):
         ship.rotateShip()
 
-    def canGridBeBombarded(self, gridElement):
-        if gridElement.isBombed == False:
-            return True
-
-    def bombardGrid(self, gridElement):
-        gridElement.bombard()
+    def putSunkShipOnEnemyGrid(self, sunkShipInfo):
+        ship = self.shipPort.getShipByLength(sunkShipInfo['length'])
+        self.placeShipToGrid( ship, self.enemyShipGridArea.grid.getGridElementOnPosition(sunkShipInfo['startColChar'], sunkShipInfo['startRowNr']) )
+        print('sunkShipInfo', sunkShipInfo)
 
     def unselectShips(self, shipNotToUnselect=None):
         for ship in self.activeArea.ships:
@@ -164,9 +217,10 @@ class Game( Widget ):
             for shipZoneElement in ship.shipZone.shipZoneElements:
                 print('zonelemendi:', shipZoneElement, shipZoneElement.pos)
                 print('parent:', shipZoneElement.parent)
+
     def testing(self):
         print('-----------------TESTING START------------------------')
-
+        print(self.screen.gameScreenView)
         print('-----------------TESTING END------------------------')
 
     def _testing(self):

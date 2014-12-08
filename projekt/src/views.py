@@ -47,9 +47,15 @@ class GameScreenView( BoxLayout ):
     #smallerGrid = None
     #mainGrid = None
     startingButton = None
+    leftPane = None
+    rightPane = None
 
     def __init__(self, **kwargs):
         super().__init__(cols=2,**kwargs)
+        self.leftPane = BoxLayout()
+        self.rightPane = BoxLayout(orientation='vertical')
+        self.add_widget(self.leftPane)
+        self.add_widget(self.rightPane)
         #self.size_hint = (1,1)
         #self.size = (900,600)
 
@@ -60,39 +66,52 @@ class GameScreenView( BoxLayout ):
         self.drawShipPlacementArea()
         self.drawShipPort()
 
-    def addWidgetToGameScreenView(self, widgetToAdd):
-        self.add_widget( widgetToAdd )
+    def addWidgetToGameScreenViewLeft(self, widgetToAdd):
+        #self.add_widget( widgetToAdd )
+        self.leftPane.add_widget( widgetToAdd )
+
+    def addWidgetToGameScreenViewRight(self, widgetToAdd):
+        #self.add_widget( widgetToAdd )
+        self.rightPane.add_widget( widgetToAdd )
+
+    def removeWidgetFromGameScreenView(self, widgetToRemove):
+        if widgetToRemove in self.rightPane.children:
+            self.rightPane.remove_widget( widgetToRemove )
+        if widgetToRemove in self.leftPane.children:
+            self.leftPane.remove_widget( widgetToRemove )
 
     def drawShipPlacementArea(self):
         self.game.shipPlacementArea = GridArea()
         self.game.activeArea = self.game.shipPlacementArea
-        self.addWidgetToGameScreenView( self.game.shipPlacementArea )
+        self.addWidgetToGameScreenViewLeft( self.game.shipPlacementArea )
         self.game.shipPlacementArea.draw(1)
 
     def drawOwnShipGridArea(self):
         self.game.ownShipGridArea = GridArea()
-        self.addWidgetToGameScreenView( self.game.ownShipGridArea )
+        self.addWidgetToGameScreenViewRight( self.game.ownShipGridArea )
         self.game.ownShipGridArea.draw(2)
 
     def drawEnemyShipGridArea(self):
         self.game.enemyShipGridArea = GridArea()
-        self.addWidgetToGameScreenView( self.game.enemyShipGridArea )
+        self.addWidgetToGameScreenViewLeft( self.game.enemyShipGridArea )
         self.game.enemyShipGridArea.draw(1)
 
     def drawShipPort(self):
         self.game.shipPort = ShipPort(game=self.game)
-        self.addWidgetToGameScreenView( self.game.shipPort )
+        self.addWidgetToGameScreenViewRight( self.game.shipPort )
         self.game.shipPort.draw()
 
     def drawStartingButton(self):
         self.startingButton = Button(text='ALUSTA MÄNGU!')
         self.startingButton.bind(on_press=self.game.startBattle)
-        self.addWidgetToGameScreenView( self.startingButton )
+        self.addWidgetToGameScreenViewRight( self.startingButton )
 
-    #def
+    def drawGameOverText(self):
+        self.rightPane.clear_widgets()
+        self.addWidgetToGameScreenViewRight( Label(font_size='40sp',text='MÄNG LÄBI !!! VÕITSID') )
 
     def removeShipPort(self):
-        self.remove_widget( self.game.shipPort )
+        self.removeWidgetFromGameScreenView( self.game.shipPort )
 
 #---------------------------------------------------------------------------------------------------
 #       BattleArea

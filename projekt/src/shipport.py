@@ -21,6 +21,7 @@ class ShipPort( BoxLayout ): #todo: this should also show status of bombed ships
     shipPiers = {}
     shipsInPort = ListProperty([])
     game = None
+    isSelectShipsAllowed = True
 
     def __init__(self, game, **kwargs):
         self.game = game
@@ -29,6 +30,8 @@ class ShipPort( BoxLayout ): #todo: this should also show status of bombed ships
         #self.add_widget(Button(text='vajutaaaaaaaaaaaaa'))
         self.bind(shipsInPort=self.onShipsInPort)
 
+    def getShipByLength(self, length):
+        return self.shipPiers[ length ].shipsInPier[0]
 
     def draw(self):
         for shipLength in range(1,5):
@@ -51,7 +54,7 @@ class ShipPier( RelativeLayout ):
 
     def __init__(self, game, **kwargs):
         self.game = game
-        super().__init__(size=(300, 100), size_hint=(None, None), **kwargs)
+        super().__init__(size=(300, 80), size_hint=(None, None), **kwargs)
         self.bind(shipsInPier=self.on_shipsInPier)
         #game.shipPort.shipPier[ int(shipLength) ] = []
 

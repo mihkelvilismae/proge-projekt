@@ -92,11 +92,15 @@ class GameStateMatrix():
         return True
 
     def getGameStateMatrixSerialized(self):
-        serializedStatus = { 'ships': {}}
+        serializedStatus = { 'ships': {}, 'shipsByLength': {}, 'shipsByPosition':{}, 'positionsByShip':{}}
         for ship in self.ships:
-            if ship.length not in serializedStatus['ships']:
-                serializedStatus['ships'][ship.length]  = []
-            serializedStatus['ships'][ship.length].append( {'startColChar':ship.startColChar, 'startRowNr':ship.startRowNr, 'direction':ship.direction })
+            serializedStatus['ships'][ship.getShipId()] = {'shipId':ship.getShipId(), 'shipPositions':ship.shipPositions, 'startColChar':ship.startColChar, 'startRowNr':ship.startRowNr, 'direction':ship.direction, 'length':ship.length }
+            #serializedStatus['positionsByShip'][ship.getShipId()] = ship.shipPositions
+            for shipPosition in ship.shipPositions:
+                serializedStatus['shipsByPosition'][shipPosition[0]+str(shipPosition[1])] = ship.getShipId()
+            if ship.length not in serializedStatus['shipsByLength']:
+                serializedStatus['shipsByLength'][ship.length]  = []
+            serializedStatus['shipsByLength'][ship.length].append( {'shipId':ship.getShipId(), 'startColChar':ship.startColChar, 'startRowNr':ship.startRowNr, 'direction':ship.direction })
         return serializedStatus
 
 

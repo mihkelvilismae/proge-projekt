@@ -6,6 +6,7 @@ from .shipzone import ShipZone
 from .parentFinder import ParentFinder
 from .grid import Grid
 from .views import GridArea
+from .shipport import ShipPort
 
 from kivy.clock import Clock
 from kivy.app import App
@@ -50,6 +51,7 @@ class Ship( RelativeLayout, HoverBehavior, ParentFinder ):
     startColChar = str
     temporarilyRemovedFromMatrix = False
     gridConfig = None
+    shipPositions = set()
 
     #shipStateMatrixElements = []
     #shipZoneStateMatrixElements = []
@@ -63,6 +65,13 @@ class Ship( RelativeLayout, HoverBehavior, ParentFinder ):
         self.bind(shipStatus=self.on_status)
         self.shipStateMatrixElements = []
         self.shipZoneStateMatrixElements = []
+        self.shipPositions = set()
+
+    def getShipId(self):
+        return self.startColChar+str(self.startRowNr)
+
+    def getShipPort(self):
+        return self.getParentByClass(ShipPort)
 
     def drawShip(self):
         self.clear_widgets()
@@ -94,7 +103,6 @@ class Ship( RelativeLayout, HoverBehavior, ParentFinder ):
         self.drawShip()
 
     def addZone(self):
-        print('addzone-----------------------')
         if self.shipZone:
             self.remove_widget(self.shipZone)
             self.shipZone = None
@@ -110,13 +118,15 @@ class Ship( RelativeLayout, HoverBehavior, ParentFinder ):
     #    return super(Ship, self).on_touch_down(touch) #propagates to children ,        http://kivy.org/docs/guide/events.html#trigger-events -  search: 'At Line 5:'
     # event bindings:
     def on_touch_down(self, touch): #this fires on the event that someone clicks on the ship
-        if self.collide_point(*touch.pos):
-            #if self.ship.shipStatus == self.ship.STATUS_SELECTED:
-                #if game.canRotateShip( self.ship):
-                #    game.rotateShip( self.ship )
-            self.shipStatus = self.STATUS_SELECTED
 
-            return True
+        if self.collide_point(*touch.pos):
+            if self.getGame().canSelectShip( self ):
+                #if self.ship.shipStatus == self.ship.STATUS_SELECTED:
+                    #if game.canRotateShip( self.ship):
+                    #    game.rotateShip( self.ship )
+                self.shipStatus = self.STATUS_SELECTED
+
+                return True
 
 # EVENT BINDINGS (end)
 

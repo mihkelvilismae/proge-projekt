@@ -33,6 +33,9 @@ class Grid( GridLayout, ParentFinder):
     colWidth = 0
     rowHeight = 0
 
+    isBombardmentAllowed = False
+    isPlacementAllowed = False
+
     def __init__(self, sizeMultiplier=1 ):
         self.gameState=GameState( self )
         self.sizeMultiplier = sizeMultiplier
@@ -43,7 +46,7 @@ class Grid( GridLayout, ParentFinder):
         #game.mainGrid = self
 
     def draw(self):
-        self.getGame().testingMainGrid = self
+        #self.getGame().testingMainGrid = self
         self.addGridElements()
         self.gameState.createGameStateMatrix()
 
@@ -80,7 +83,7 @@ class Grid( GridLayout, ParentFinder):
 
     def addGridElements(self):
         self.gridElements = collections.OrderedDict()
-        self.get_root_window().children[0].gridElements = self.gridElements
+        #self.get_root_window().children[0].gridElements = self.gridElements #screen
         for rowNr in self.getGame().mainConfig.rowNumbers:
             self.gridElements[ rowNr ] = collections.OrderedDict()
             for colNr, colCharacter in enumerate(self.getGame().mainConfig.columnChars):
@@ -164,7 +167,7 @@ class GridBattlefieldElement( GridElement ):
         if self.collide_point(*touch.pos):
             if self.game.canShipBePlaced(self.game.selectedShip, self): #todo should i check in game and then do placement in ship ?
                 self.game.placeShipToGrid(self.game.selectedShip, self)
-            elif self.game.canGridBeBombarded( self ):
+            elif self.game.canGridElementBeBombarded( self ):
                 self.game.bombardGrid(self)
             return True
 

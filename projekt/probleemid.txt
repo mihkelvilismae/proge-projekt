@@ -7,3 +7,6 @@
 
 TODO:
 laevade paigutamisel ei saa "laeva selectida" ja siis "panna laev enda vana ala sisse"
+
+head asjad:
+- kui teed funkstiooni, mis nõuab ka mingit eelnevat kontrolli, siis deklareeri kontrollfunktsioon ära (lihtsalt "return true") ja kirjuta kontroll koodi sisse kohe
