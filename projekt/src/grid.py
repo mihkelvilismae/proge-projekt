@@ -150,7 +150,7 @@ class GridBattlefieldElement( GridElement ):
         self.add_widget( self.tooltipRectangle )
 
     def calculateElementRectanglePosition(self):
-        return (self.pos[0]+5, self.pos[1]+5)
+        return (5, 5)
 
     def bombard(self):
         #elementRectangle = Rectangle( pos_hint=(None,None), size=self.gridConfig.battlefieldRectangleSize, pos=self.calculateElementRectanglePosition() )
@@ -159,6 +159,9 @@ class GridBattlefieldElement( GridElement ):
         #self.canvas.add( line )
         self.isBombed = True
         self.canvas.clear()
+        elementRectangle = Rectangle( size_hint=(None,None), size=self.gridConfig.battlefieldRectangleSize, pos=self.calculateElementRectanglePosition() )
+        self.canvas.add( Color(1,0,0) )
+        self.canvas.add( elementRectangle )
 
 
 # EVENT BINDINGS (start):
