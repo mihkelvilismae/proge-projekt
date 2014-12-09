@@ -41,7 +41,6 @@ class Ship( RelativeLayout, HoverBehavior, ParentFinder ):
 
     shipStatus = StringProperty( STATUS_WAITING_TO_BE_PICKED_UP ) # baseerub nupp.py näitel
     length = 1
-    color = Color(1,1,0)
     position = (0,0)
     direction = 'H'
     shipPier = None
@@ -57,6 +56,7 @@ class Ship( RelativeLayout, HoverBehavior, ParentFinder ):
     #shipZoneStateMatrixElements = []
 
     def __init__(self, gridConfig, length=1, **kwargs):
+        self.color = color = Color(1,1,0)
         self.mainConfig = MainConfig()
         self.gridConfig = gridConfig
         super().__init__(size_hint=(None,None), pos=self.position, size=self.calculateShipSize(length), **kwargs)
@@ -97,9 +97,9 @@ class Ship( RelativeLayout, HoverBehavior, ParentFinder ):
         elif self.shipStatus==self.STATUS_WAITING_TO_BE_PICKED_UP:
             self.color = Color(1,1,0)
         elif self.shipStatus==self.STATUS_PLACED:
-            self.color = Color(0,1,1)
-            if self.getGrid().sizeMultiplier==2:
-                self.color = Color(0,1,1, 0.5)
+            self.color = Color(1,0.2,0.2)
+            if self.getGrid().sizeMultiplier==2: # ownGrid ship color
+                self.color = Color(1,1,0, 0.5)
             self.addZone()
 
         self.drawShip()

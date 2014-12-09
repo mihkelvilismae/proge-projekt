@@ -35,7 +35,11 @@ class Game( Widget ):
         self.bind(allShipsOnGrid=self.onAllShipsOnGrid)
 
         #fixme: temporary
-        self.suitableEnemyPositions = [('A',1),('B',1),('C',1),('D',1),('E',1),('F',1),('G',1),('A',3),('A',4)]
+        #self.suitableEnemyPositions = [(x.colChar, x.rowNr) for x in self.ownShipGridArea.grid.gridElements]
+        self.suitableEnemyPositions = []
+        for rowNumber in [1,2,3,4,5,6,7,8,9,10]:
+            for colChar in list('ABCDEFGHIJ'):
+                self.suitableEnemyPositions.append((colChar, rowNumber))
 
     def startGame(self):
         self.screen.drawGameScreenView()
@@ -84,7 +88,9 @@ class Game( Widget ):
 
     def getEnemyBombardmentPosition(self):
         #suitablePostition = self.ownShipGridArea.grid.gridElements
-        return self.suitableEnemyPositions.pop()
+        import random
+        position = random.randint(0,len(self.suitableEnemyPositions))
+        return self.suitableEnemyPositions.pop(position)
 
     def disallowBombardment(self, grid):
         grid.isBombardmentAllowed = False
@@ -136,9 +142,9 @@ class Game( Widget ):
 
     def createShips(self, gridConfig):
         ships = []
-        shipsCountByLength = {1:4, 2:3, 3:2, 4:1}
         shipsCountByLength = {1:4}
         shipsCountByLength = {4:1}
+        shipsCountByLength = {1:4, 2:3, 3:2, 4:1}
         shipsCountByLength = {1:1, 4:1}
         for shipLength, shipCount in shipsCountByLength.items():
             for _ in range(0, shipCount):
