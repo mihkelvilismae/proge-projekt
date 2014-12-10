@@ -90,7 +90,6 @@ class Ship( RelativeLayout, HoverBehavior, ParentFinder ):
             position = self.pos
         else:
             position = (self.pos[0], self.pos[1]-self.gridConfig.shipBlockHeight*self.length)
-        print(position)
         return position
 
     def getGrid(self):
@@ -113,7 +112,6 @@ class Ship( RelativeLayout, HoverBehavior, ParentFinder ):
         self.drawShip()
 
     def addZone(self):
-        #print('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa')
         if self.shipZone:
             self.remove_widget(self.shipZone)
             self.shipZone = None
@@ -124,20 +122,6 @@ class Ship( RelativeLayout, HoverBehavior, ParentFinder ):
             self.shipZone.zoneStatus = ShipZone.STATUS_GREY
             self.shipZone.draw()
         Clock.schedule_once(drawZone, 0)
-
-    #def on_touch_down(self, touch): #this fires on the event that someone clicks on the ship
-    #    return super(Ship, self).on_touch_down(touch) #propagates to children ,        http://kivy.org/docs/guide/events.html#trigger-events -  search: 'At Line 5:'
-    # event bindings:
-    def on_touch_down(self, touch): #this fires on the event that someone clicks on the ship
-
-        if self.collide_point(*touch.pos):
-            if self.getGame().canSelectShip( self ):
-                if self.shipStatus == self.STATUS_SELECTED:
-                    if self.getGame().canRotateShip( self):
-                        self.getGame().rotateShip( self )
-                self.shipStatus = self.STATUS_SELECTED
-
-                return True
 
 # EVENT BINDINGS (end)
 
@@ -168,8 +152,6 @@ class Ship( RelativeLayout, HoverBehavior, ParentFinder ):
                 elementPosition = ( elementPosition[0], elementPosition[1]-shipBlockWidth )
         return elementRectangles
 
-    #def bombardShipPart(self):
-    #   pass
     def on_enter(self):
         print(self)
 
@@ -210,15 +192,14 @@ class ShipElementRectangle( Widget, HoverBehavior, ParentFinder ):
 
 # event bindings:
      def on_touch_down(self, touch): #this fires on the event that someone clicks on the ship
-         2
-        #---if self.collide_point(*touch.pos):
-            ##print('sai pihta')
-            #if self.ship.shipStatus == self.ship.STATUS_SELECTED:
-                #if game.canRotateShip( self.ship):
-                #    game.rotateShip( self.ship )
-        #----    self.ship.shipStatus = self.ship.STATUS_SELECTED
+        if self.collide_point(*touch.pos):
+            if self.getGame().canSelectShip( self.ship ):
+                if self.ship.shipStatus == self.ship.STATUS_SELECTED:
+                    if self.ship.getGame().canRotateShip( self.ship):
+                        self.ship.getGame().rotateShip( self.ship )
+                self.ship.shipStatus = self.ship.STATUS_SELECTED
 
-        #----  return True
+                return True
 
      def on_enter(self):
          2

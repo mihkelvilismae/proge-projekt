@@ -77,6 +77,7 @@ class Game( Widget ):
         elif bombardResult['result']==BattleStatus.BOMBARD_RESULT_MISS:
             print('XXXXX PROCESS miss')
         else: #a ship is sunk
+            print(bombardResult['sunkship'])
             sunkShip = self.putSunkShipOnEnemyGrid( bombardResult['sunkship'] )
             self.lockShipZoneGridElements( sunkShip )
             if bombardResult['gameOver']==True:
@@ -240,6 +241,7 @@ class Game( Widget ):
 
     def putSunkShipOnEnemyGrid(self, sunkShipInfo):
         ship = self.shipPort.getShipByLength(sunkShipInfo['length'])
+        ship.direction = sunkShipInfo['direction']
         self.placeShipToGrid( ship, self.enemyShipGridArea.grid.getGridElementOnPosition(sunkShipInfo['startColChar'], sunkShipInfo['startRowNr']) )
         return ship
 
