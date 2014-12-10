@@ -84,11 +84,18 @@ class GameStateMatrix():
 
     def isShipPositionValidX( self, ship, colChar, rowNr ):
         #todo: make this work when direction='vertical'
-        for _ in range(0, ship.length):
-            stateOnPosition = self.getStateOnAreaCoordinates( colChar, rowNr )
-            if stateOnPosition == False or not stateOnPosition.isEmpty():
-                return False
-            colChar = self.incrementChar( colChar )
+        if ship.direction==ship.DIRECTION_HORIZONTAL:
+            for _ in range(0, ship.length):
+                stateOnPosition = self.getStateOnAreaCoordinates( colChar, rowNr )
+                if stateOnPosition == False or not stateOnPosition.isEmpty():
+                    return False
+                colChar = self.incrementChar( colChar )
+        else:
+            for _ in range(0, ship.length):
+                stateOnPosition = self.getStateOnAreaCoordinates( colChar, rowNr )
+                if stateOnPosition == False or not stateOnPosition.isEmpty():
+                    return False
+                rowNr += 1
         return True
 
     def getGameStateMatrixSerialized(self):

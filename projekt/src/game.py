@@ -95,9 +95,9 @@ class Game( Widget ):
 
     def getEnemyBombardmentPosition(self):
         #suitablePostition = self.ownShipGridArea.grid.gridElements
-        return self.xxx.pop()
+        #return self.xxx.pop()
         import random
-        position = random.randint(0,len(self.suitableEnemyPositions))
+        position = random.randint(0,len(self.suitableEnemyPositions)-1)
         return self.suitableEnemyPositions.pop(position)
 
     def disallowBombardment(self, grid):
@@ -153,8 +153,8 @@ class Game( Widget ):
         shipsCountByLength = {1:4}
         shipsCountByLength = {4:1}
         shipsCountByLength = {1:4, 2:3, 3:2, 4:1}
-        shipsCountByLength = {1:1, 4:1}
         shipsCountByLength = {1:1}
+        shipsCountByLength = {1:1, 4:1}
         for shipLength, shipCount in shipsCountByLength.items():
             for _ in range(0, shipCount):
                 ship = Ship( gridConfig, shipLength )
@@ -215,12 +215,13 @@ class Game( Widget ):
         #Clock.schedule_once(drawZone, 0)
 
     def canRotateShip(self, ship): #todo implement this
-        if not isinstance( ship, Ship ):
+        if not isinstance( ship, Ship ) or ship.isInPort:
             return False
         return True
 
     def rotateShip(self, ship):
         ship.rotateShip()
+        self.unselectShips()
 
     def putSunkShipOnEnemyGrid(self, sunkShipInfo):
         ship = self.shipPort.getShipByLength(sunkShipInfo['length'])
