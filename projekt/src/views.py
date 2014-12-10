@@ -106,9 +106,14 @@ class GameScreenView( BoxLayout ):
         self.startingButton.bind(on_press=self.game.startBattle)
         self.addWidgetToGameScreenViewRight( self.startingButton )
 
-    def drawGameOverText(self):
+    def drawGameOverText(self, youWon):
         self.rightPane.clear_widgets()
-        self.addWidgetToGameScreenViewRight( Label(font_size='40sp',text='MÄNG LÄBI !!! VÕITSID') )
+        print(youWon)
+        if youWon == True:
+            text = 'MÄNG LÄBI !!! VÕITSID !'
+        else:
+            text = "MÄNG LÄBI !!! Kaotasid.... :'("
+        self.addWidgetToGameScreenViewRight( Label(font_size='40sp',text=text) )
 
     def removeShipPort(self):
         self.removeWidgetFromGameScreenView( self.game.shipPort )
@@ -120,6 +125,7 @@ class GridArea( RelativeLayout ):
     grid = None
 
     def __init__(self, **kwargs):
+        self.ships = []
         super().__init__(**kwargs)
 
     def draw(self, sizeMultiplier):

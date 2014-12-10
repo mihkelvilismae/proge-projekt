@@ -142,4 +142,7 @@ class GameState( GameStateMatrix ):
     def isShipPositionValid(self, ship, colChar, rowNr):
         return self.isShipPositionValidX( ship, colChar, rowNr )
 
+    def areUnsunkShipsLeftOnGrid(self):
+        return len(self.ships)!=0
 
+        print('jeeeeeeeeees')

@@ -22,7 +22,7 @@ class Game( Widget ):
 
     shipPlacementArea = None
     ownShipGridArea = None
-    enemyShipGridArea = None
+
 
     allShipsOnGrid = BooleanProperty(False)
     activeArea = None
@@ -31,8 +31,11 @@ class Game( Widget ):
     #gameState = None
 
     def __init__(self, **kwargs):
+
+        self.xxx = [('A',1),('B',1),('C',1)]
         self.mainConfig = MainConfig()
         self.bind(allShipsOnGrid=self.onAllShipsOnGrid)
+        self.enemyShipGridArea = None
 
         #fixme: temporary
         #self.suitableEnemyPositions = [(x.colChar, x.rowNr) for x in self.ownShipGridArea.grid.gridElements]
@@ -77,7 +80,7 @@ class Game( Widget ):
             sunkShip = self.putSunkShipOnEnemyGrid( bombardResult['sunkship'] )
             self.lockShipZoneGridElements( sunkShip )
             if bombardResult['gameOver']==True:
-                self.endGame()
+                self.endGame( True )
         gridElement.bombard( bombardResult['result'] )
 
         self.enemyTurn()
@@ -85,9 +88,14 @@ class Game( Widget ):
     def enemyTurn(self):
         enemyBombardment = self.getEnemyBombardmentPosition()
         self.ownShipGridArea.grid.getGridElementOnPosition( enemyBombardment[0], enemyBombardment[1] ).bombard(BattleStatus.BOMBARD_RESULT_ENEMY_BOMBED_MY_GRID) #todo: this should use mode complex logic
+        if self.ownShipGridArea.grid.gameState.getMatrixElement( enemyBombardment[0], enemyBombardment[1] ).ship != None:
+            self.ownShipGridArea.grid.gameState.getMatrixElement( enemyBombardment[0], enemyBombardment[1] ).removeShip(  )
+        if self.ownShipGridArea.grid.gameState.areUnsunkShipsLeftOnGrid()==False:
+            self.endGame(False)
 
     def getEnemyBombardmentPosition(self):
         #suitablePostition = self.ownShipGridArea.grid.gridElements
+        return self.xxx.pop()
         import random
         position = random.randint(0,len(self.suitableEnemyPositions))
         return self.suitableEnemyPositions.pop(position)
@@ -110,9 +118,9 @@ class Game( Widget ):
             gridElement = self.enemyShipGridArea.grid.getGridElementOnPosition( shipZoneStateMatrixElement.colChar, shipZoneStateMatrixElement.rowNr)
             gridElement.isLocked = True
 
-    def endGame(self):
+    def endGame(self, didHumanWin):
         self.disallowBombardment( self.enemyShipGridArea.grid )
-        self.screen.gameScreenView.drawGameOverText()
+        self.screen.gameScreenView.drawGameOverText( didHumanWin )
 
     def populateEnemyPort(self):
         ships = self.createShips( self.enemyShipGridArea.grid.gridConfig )
@@ -146,6 +154,7 @@ class Game( Widget ):
         shipsCountByLength = {4:1}
         shipsCountByLength = {1:4, 2:3, 3:2, 4:1}
         shipsCountByLength = {1:1, 4:1}
+        shipsCountByLength = {1:1}
         for shipLength, shipCount in shipsCountByLength.items():
             for _ in range(0, shipCount):
                 ship = Ship( gridConfig, shipLength )
@@ -180,6 +189,7 @@ class Game( Widget ):
 
 
     def placeShipToGrid(self, ship, battlefieldGridElement):
+        print('placeshptogird', ship)
         ship.temporarilyRemovedFromMatrix = False
 
         #removes ship from port
@@ -231,7 +241,8 @@ class Game( Widget ):
 
     def testing(self):
         print('-----------------TESTING START------------------------')
-        print(self.screen.gameScreenView)
+        print('ownshps', self.ownShipGridArea.grid.gameState.ships)
+        print('enemyships', self.enemyShipGridArea.ships)
         print('-----------------TESTING END------------------------')
 
     def _testing(self):

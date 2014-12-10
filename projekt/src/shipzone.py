@@ -3,6 +3,7 @@ from .behaviours import HoverBehavior
 from .parentFinder import ParentFinder
 from .views import GridArea
 from .gameconfig import *
+#from .ships import Ship
 
 
 from kivy.graphics import *
@@ -49,14 +50,23 @@ class ShipZone( RelativeLayout, HoverBehavior, ParentFinder ):
     def createShipZoneElements(self):
         shipZoneElements = []
         #todo: take into account ship direction
-        for x in range(0, self.ship.length+2):
-            for y in [0,2]:
+
+        if self.ship.direction == self.ship.DIRECTION_HORIZONTAL:
+            widthLength = self.ship.length+2
+            heightLength = 3
+        else:
+            widthLength = 3
+            heightLength = self.ship.length+2
+
+        for x in range(0, widthLength):
+            for y in range(0, heightLength):
                 shipZoneElement = ShipZoneElement( shipZone=self, xMultiplier=x, yMultiplier=y )
                 shipZoneElements.append( shipZoneElement )
-        shipZoneElement = ShipZoneElement( shipZone=self, xMultiplier=self.ship.length+1, yMultiplier=1 )
-        shipZoneElements.append( shipZoneElement )
-        shipZoneElement = ShipZoneElement( shipZone=self, xMultiplier=0, yMultiplier=1 )
-        shipZoneElements.append( shipZoneElement )
+        #shipZoneElement = ShipZoneElement( shipZone=self, xMultiplier=self.ship.length+1, yMultiplier=1 )
+        #shipZoneElements.append( shipZoneElement )
+        #shipZoneElement = ShipZoneElement( shipZone=self, xMultiplier=0, yMultiplier=1 )
+        #shipZoneElements.append( shipZoneElement )
+
         return shipZoneElements
 
     def getColor(self):

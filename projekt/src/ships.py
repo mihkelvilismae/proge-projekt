@@ -123,9 +123,9 @@ class Ship( RelativeLayout, HoverBehavior, ParentFinder ):
 
         if self.collide_point(*touch.pos):
             if self.getGame().canSelectShip( self ):
-                #if self.ship.shipStatus == self.ship.STATUS_SELECTED:
-                    #if game.canRotateShip( self.ship):
-                    #    game.rotateShip( self.ship )
+                if self.shipStatus == self.STATUS_SELECTED:
+                    if self.getGame().canRotateShip( self):
+                        self.getGame().rotateShip( self )
                 self.shipStatus = self.STATUS_SELECTED
 
                 return True
@@ -155,21 +155,25 @@ class Ship( RelativeLayout, HoverBehavior, ParentFinder ):
             if self.direction == self.DIRECTION_HORIZONTAL:
                 elementPosition = ( elementPosition[0]+shipBlockWidth, elementPosition[1] )
             else:
-                elementPosition = ( elementPosition[0], elementPosition[1]+shipBlockWidth )
+                elementPosition = ( elementPosition[0], elementPosition[1]-shipBlockWidth )
         return elementRectangles
 
     #def bombardShipPart(self):
     #   pass
+    def on_enter(self):
+        print(self)
 
     def bombardGridxxx(self):
         pass
 
     def calculateShipSize(self, shipLength):
-        #todo: direction
-        return (self.gridConfig.shipBlockWidth * shipLength, self.gridConfig.shipBlockHeight)
+        if self.direction==Ship.DIRECTION_HORIZONTAL:
+            return (self.gridConfig.shipBlockWidth * shipLength, self.gridConfig.shipBlockHeight)
+        else:
+            return (self.gridConfig.shipBlockWidth, self.gridConfig.shipBlockHeight * shipLength)
         #return (self.mainConfig.shipBlockWidth * shipLength, self.mainConfig.shipBlockHeight)
 
-    def on_pos(self, a,b):
+    def on_pos(self, a,b): # TODO: WTF IS THIS?!?!
         if self.getGame()!=None:
             self.getGame().shipPlacementArea.grid.gameState.removeShipFromGameStateMatrix(self)
 
