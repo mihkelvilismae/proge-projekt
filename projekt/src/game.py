@@ -189,7 +189,7 @@ class Game( Widget ):
 
 
     def placeShipToGrid(self, ship, battlefieldGridElement):
-        print('placeshptogird', ship)
+        #print('placeshptogird', ship)
         ship.temporarilyRemovedFromMatrix = False
 
         #removes ship from port
@@ -215,13 +215,27 @@ class Game( Widget ):
         #Clock.schedule_once(drawZone, 0)
 
     def canRotateShip(self, ship): #todo implement this
-        if not isinstance( ship, Ship ) or ship.isInPort:
-            return False
-        return True
+        #temporarily set other direction
+        self.flipShipRotation(ship)
+        print(ship.direction)
+        if not isinstance( ship, Ship ) or ship.isInPort or not self.canShipBePlaced( ship, self.shipPlacementArea.grid.getGridElementOnPosition(ship.startColChar, ship.startRowNr)):
+            result = False
+        else:
+            result = True
+        self.flipShipRotation(ship)
+
+        return result
+
+    def flipShipRotation(self, ship):
+        if ship.direction==Ship.DIRECTION_HORIZONTAL:
+            ship.direction = Ship.DIRECTION_VERTICAL
+        else:
+            ship.direction=Ship.DIRECTION_HORIZONTAL
 
     def rotateShip(self, ship):
         ship.rotateShip()
-        self.unselectShips()
+        self.placeShipToGrid(ship, self.shipPlacementArea.grid.getGridElementOnPosition(ship.startColChar, ship.startRowNr))
+        #ship.shipStatus = Ship.STATUS_PLACED
 
     def putSunkShipOnEnemyGrid(self, sunkShipInfo):
         ship = self.shipPort.getShipByLength(sunkShipInfo['length'])
@@ -234,27 +248,34 @@ class Game( Widget ):
                 if ship.temporarilyRemovedFromMatrix == True:
                     ship.temporarilyRemovedFromMatrix = False
                     ship.getGrid().gameState.placeShipInGameStateMatrix( ship, ship.startColChar, ship.startRowNr )
+                    ship.shipStatus = ship.STATUS_PLACED
                 ship.shipStatus = ship.STATUS_WAITING_TO_BE_PICKED_UP
+                #if ship.isInPort==True:
+                #    ship.shipStatus = ship.STATUS_WAITING_TO_BE_PICKED_UP
+
+                #else:
+                #    ship.shipStatus = ship.STATUS_PLACED
 
     def onAllShipsOnGrid(self, instance, pos):
         self.screen.gameScreenView.drawStartingButton()
         self.screen.gameScreenView.removeShipPort()
 
     def testing(self):
-        print('-----------------TESTING START------------------------')
-        print('ownshps', self.ownShipGridArea.grid.gameState.ships)
-        print('enemyships', self.enemyShipGridArea.ships)
-        print('-----------------TESTING END------------------------')
+        pass
+        #print('-----------------TESTING START------------------------')
+        #print('ownshps', self.ownShipGridArea.grid.gameState.ships)
+        #print('enemyships', self.enemyShipGridArea.ships)
+        #print('-----------------TESTING END------------------------')
 
     def _testing(self):
-        print('-----------------TESTING START------------------------')
+        #print('-----------------TESTING START------------------------')
         #print(self.testingMainGrid.gameState.getStateOnAreaCoordinates('A',2))
         #print(self.testingMainGrid.gameState.printGameStateMatrix())
-        print('BATTLEAREA-----------------------------------')
+        #print('BATTLEAREA-----------------------------------')
         self.shipPlacementArea.grid.gameState.generateSimplifiedMatrix()
         print(id(self.shipPlacementArea.grid.gameState))
         if self.ownShipGridArea:
-            print('ownShipGridArea -----------------------------------')
+            #print('ownShipGridArea -----------------------------------')
             print(id(self.ownShipGridArea.grid.gameState))
             self.ownShipGridArea.grid.gameState.generateSimplifiedMatrix()
         #for ship in self.ships:
@@ -263,7 +284,7 @@ class Game( Widget ):
         #    ship.addZone()
             #ship.shipZone.draw()
         #for rect in ship.shipRectangles:
-        #    print('rect',rect, rect.pos, rect.to_window(rect.pos[0],rect.pos[1]))
-        print('-----------------TESTING END------------------------')
+        #    #print('rect',rect, rect.pos, rect.to_window(rect.pos[0],rect.pos[1]))
+        #print('-----------------TESTING END------------------------')
 
 

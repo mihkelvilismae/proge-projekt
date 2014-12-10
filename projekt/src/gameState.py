@@ -152,4 +152,4 @@ class GameState( GameStateMatrix ):
     def areUnsunkShipsLeftOnGrid(self):
         return len(self.ships)!=0
 
-        print('jeeeeeeeeees')
+        #print('jeeeeeeeeees')

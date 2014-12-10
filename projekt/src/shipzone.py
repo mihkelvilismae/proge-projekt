@@ -81,7 +81,7 @@ class ShipZone( RelativeLayout, HoverBehavior, ParentFinder ):
         self.draw()
 
     def on_enter(self):
-        #print('enter shipzone', self, self.pos)
+        ##print('enter shipzone', self, self.pos)
         pass
 
 #---------------------------------------------------------------------------------------------------------------
@@ -118,5 +118,5 @@ class ShipZoneElement( Widget, ParentFinder, HoverBehavior):
 
     def on_enter(self):
         #if self.parent != None and self.getGame().ownShipGridArea and self.parent.parent in self.getGame().ownShipGridArea.ships:
-        #print('enter shipzoneelement', self, self.pos)
+        ##print('enter shipzoneelement', self, self.pos)
         pass

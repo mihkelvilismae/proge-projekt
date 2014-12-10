@@ -19,10 +19,10 @@ class GameStateMatrixElement():
         self.colChar = colChar
 
     def addShip(self, ship):
-        print('---------------')
-        print('teeb GameStateMatrixElement.addship', self)
-        print('paneb siia:', id(self.gameState.ships))
-        print('laeva:', ship)
+        #print('---------------')
+        #print('teeb GameStateMatrixElement.addship', self)
+        #print('paneb siia:', id(self.gameState.ships))
+        #print('laeva:', ship)
         if ship not in self.gameState.ships:
             self.gameState.ships.append( ship )
         self.ship = ship
@@ -31,15 +31,15 @@ class GameStateMatrixElement():
         ship.shipPositions.add((self.colChar, self.rowNr))
 
     def removeShip(self):
-        print('REMOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOVES HSIP')
+        #print('REMOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOVES HSIP')
         self.ship.shipStateMatrixElements.remove(self)
         #if len(self.ship.shipStateMatrixElements)==0 and self.ship in self.gameState.ships:
         #    self.gameState.ships.remove( self.ship )
         self.childrenStates.remove(self.ship)
         self.ship.shipPositions.remove((self.colChar, self.rowNr))
-        print('ennnne oli', self.gameState.ships)
+        #print('ennnne oli', self.gameState.ships)
         if len(self.ship.shipPositions)==0:
-            print('TEEEEEEEEEEEEEEEEEEEEEEEEEEEGI')
+            #print('TEEEEEEEEEEEEEEEEEEEEEEEEEEEGI')
             self.gameState.ships.remove( self.ship )
             print(self.gameState.ships)
         self.ship = None

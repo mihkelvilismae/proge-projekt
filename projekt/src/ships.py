@@ -105,6 +105,7 @@ class Ship( RelativeLayout, HoverBehavior, ParentFinder ):
         self.drawShip()
 
     def addZone(self):
+        #print('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa')
         if self.shipZone:
             self.remove_widget(self.shipZone)
             self.shipZone = None
@@ -202,7 +203,7 @@ class ShipElementRectangle( Widget, HoverBehavior, ParentFinder ):
      def on_touch_down(self, touch): #this fires on the event that someone clicks on the ship
          2
         #---if self.collide_point(*touch.pos):
-            #print('sai pihta')
+            ##print('sai pihta')
             #if self.ship.shipStatus == self.ship.STATUS_SELECTED:
                 #if game.canRotateShip( self.ship):
                 #    game.rotateShip( self.ship )
