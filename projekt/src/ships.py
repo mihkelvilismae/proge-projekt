@@ -144,6 +144,7 @@ class Ship( RelativeLayout, HoverBehavior, ParentFinder ):
     def placeShip(self, position):
         self.pos = position
         self.drawShip()
+        self.shipStatus = self.STATUS_PLACED
 
     def createShipElementRectangles(self):
         shipBlockWidth = self.gridConfig.shipBlockWidth

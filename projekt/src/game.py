@@ -236,6 +236,7 @@ class Game( Widget ):
         ship.rotateShip()
         self.placeShipToGrid(ship, self.shipPlacementArea.grid.getGridElementOnPosition(ship.startColChar, ship.startRowNr))
         #ship.shipStatus = Ship.STATUS_PLACED
+        self.unselectShips()
 
     def putSunkShipOnEnemyGrid(self, sunkShipInfo):
         ship = self.shipPort.getShipByLength(sunkShipInfo['length'])
@@ -261,11 +262,17 @@ class Game( Widget ):
         self.screen.gameScreenView.removeShipPort()
 
     def testing(self):
-        pass
-        #print('-----------------TESTING START------------------------')
+
+        print('-----------------TESTING START------------------------')
+        if (self.selectedShip):
+            print(self.selectedShip.length)
+            print(self.selectedShip.shipStatus)
+            print(self.selectedShip.direction)
+        else:
+            print('noe selectedd')
+        print('-----------------TESTING END------------------------')
         #print('ownshps', self.ownShipGridArea.grid.gameState.ships)
         #print('enemyships', self.enemyShipGridArea.ships)
-        #print('-----------------TESTING END------------------------')
 
     def _testing(self):
         #print('-----------------TESTING START------------------------')
