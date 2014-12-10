@@ -36,7 +36,7 @@ class ShipZone( RelativeLayout, HoverBehavior, ParentFinder ):
     def draw(self):
         self.clear_widgets()
         self.canvas.clear()
-        self.pos=(-self.gridConfig.battlefieldRectangleSize[0],-self.gridConfig.battlefieldRectangleSize[1])
+        self.pos=self.calculateShipZonePosition()
         self.shipZoneElements = self.createShipZoneElements()
         for shipZoneElement in self.shipZoneElements.copy():
             self.add_widget( shipZoneElement )
@@ -46,6 +46,13 @@ class ShipZone( RelativeLayout, HoverBehavior, ParentFinder ):
             else:
                 self.remove_widget( shipZoneElement )
                 self.shipZoneElements.remove( shipZoneElement )
+
+    def calculateShipZonePosition(self):
+        if self.ship.direction==self.ship.DIRECTION_HORIZONTAL:
+            position = (-self.gridConfig.battlefieldRectangleSize[0],-self.gridConfig.battlefieldRectangleSize[1])
+        else:
+            position = (-self.gridConfig.battlefieldRectangleSize[0],-self.gridConfig.shipBlockHeight*self.ship.length)
+        return position
 
     def createShipZoneElements(self):
         shipZoneElements = []

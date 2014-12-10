@@ -142,7 +142,10 @@ class GameState( GameStateMatrix ):
         for _ in range(0, ship.length):
             print(colChar, rowNr)
             self.getMatrixElement(colChar, rowNr).addShip( ship )
-            colChar = self.incrementChar( colChar )
+            if ship.direction==ship.DIRECTION_HORIZONTAL:
+                colChar = self.incrementChar( colChar )
+            else:
+                rowNr += 1
 
     def removeShipFromGameStateMatrix(self, ship):
         for shipStateMatrixElement in ship.shipStateMatrixElements.copy():
