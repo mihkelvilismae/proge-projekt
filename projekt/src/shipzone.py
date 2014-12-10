@@ -60,6 +60,12 @@ class ShipZone( RelativeLayout, HoverBehavior, ParentFinder ):
 
         for x in range(0, widthLength):
             for y in range(0, heightLength):
+                if self.ship.direction==self.ship.DIRECTION_HORIZONTAL:
+                    if y==1 and x not in [0, widthLength-1]:
+                        continue
+                else:
+                    if x==1 and y not in [0, heightLength-1]:
+                        continue
                 shipZoneElement = ShipZoneElement( shipZone=self, xMultiplier=x, yMultiplier=y )
                 shipZoneElements.append( shipZoneElement )
         #shipZoneElement = ShipZoneElement( shipZone=self, xMultiplier=self.ship.length+1, yMultiplier=1 )

@@ -131,10 +131,12 @@ class GameState( GameStateMatrix ):
                 self.gameStateMatrix[ rowNr ][ colChar ] = GameStateMatrixElement(self, colChar, rowNr)
 
     def placeShipInGameStateMatrix(self, ship, colChar, rowNr):
+        print(ship.direction)
         self.addShipZoneToMatrix( ship, colChar, rowNr )
         #todo: make this work when direction='vertical'
 
         for _ in range(0, ship.length):
+            print(colChar, rowNr)
             self.getMatrixElement(colChar, rowNr).addShip( ship )
             colChar = self.incrementChar( colChar )
 
