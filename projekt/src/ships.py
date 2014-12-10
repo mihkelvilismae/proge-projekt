@@ -59,7 +59,7 @@ class Ship( RelativeLayout, HoverBehavior, ParentFinder ):
         self.color = color = Color(1,1,0)
         self.mainConfig = MainConfig()
         self.gridConfig = gridConfig
-        super().__init__(size_hint=(None,None), pos=self.position, size=self.calculateShipSize(length), **kwargs)
+        super().__init__(size_hint=(None,None), pos=self.calculateShipPosition(), size=self.calculateShipSize(length), **kwargs)
         self.length = length
         self.drawShip()
         self.bind(shipStatus=self.on_status)
@@ -84,6 +84,14 @@ class Ship( RelativeLayout, HoverBehavior, ParentFinder ):
             self.add_widget(elementRectangle)
             self.shipRectangles.append( elementRectangle )
             elementRectangle.draw()
+
+    def calculateShipPosition(self):
+        if self.direction==Ship.DIRECTION_HORIZONTAL:
+            position = self.pos
+        else:
+            position = (self.pos[0], self.pos[1]-self.gridConfig.shipBlockHeight*self.length)
+        print(position)
+        return position
 
     def getGrid(self):
         return self.getParentByClass( GridArea ).grid
