@@ -4,26 +4,15 @@ from .behaviours import HoverBehavior
 from .gameconfig import MainConfig
 from .shipzone import ShipZone
 from .parentFinder import ParentFinder
-from .grid import Grid
 from .views import GridArea
 from .shipport import ShipPort
 
 from kivy.clock import Clock
-from kivy.app import App
 from kivy.uix.widget import Widget
-from kivy.uix.label import Label
-from kivy.uix.button import Button
-from kivy.config import Config
 from kivy.graphics import *
 from kivy.graphics import Color, Ellipse, Line
-from kivy.core.text import Label as CoreLabel
-from kivy.uix.gridlayout import GridLayout
-from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.relativelayout import RelativeLayout
-from kivy.uix.floatlayout import FloatLayout
-from kivy.uix.stacklayout import StackLayout
 from kivy.properties import StringProperty, ObjectProperty, BooleanProperty, ListProperty
-import random
 
 #---------------------------------------------------------------------------------------------------
 #       @Ship
@@ -52,9 +41,6 @@ class Ship( RelativeLayout, HoverBehavior, ParentFinder ):
     gridConfig = None
     shipPositions = set()
 
-    #shipStateMatrixElements = []
-    #shipZoneStateMatrixElements = []
-
     def __init__(self, gridConfig, length=1, **kwargs):
         self.color = color = Color(1,1,0)
         self.mainConfig = MainConfig()
@@ -76,7 +62,6 @@ class Ship( RelativeLayout, HoverBehavior, ParentFinder ):
     def drawShip(self):
         self.clear_widgets()
         self.canvas.clear()
-        #for i,elementRectangle in zip([Color(0,1,1),Color(1,1,0),Color(0,0,1),Color(1,1,1)], self.createShipElementRectangles()):
         for shipRectToRemove in self.shipRectangles.copy(): #FIXME: SHIPRECTANGLES STAY IN LOWER-LEFT PART OF CANVAS AND DONT DISAPPEAR
             self.remove_widget( shipRectToRemove )
             self.shipRectangles.remove(shipRectToRemove)
@@ -143,7 +128,6 @@ class Ship( RelativeLayout, HoverBehavior, ParentFinder ):
         elementRectangles = list()
         elementPosition = (0,0)
         for i in range(0, self.length):
-            #elementRectangle = Rectangle(pos=elementPosition, size=(shipBlockWidth, shipBlockWidth))
             elementRectangle = ShipElementRectangle( self, elementPosition )
             elementRectangles.append(elementRectangle)
             if self.direction == self.DIRECTION_HORIZONTAL:
@@ -151,12 +135,6 @@ class Ship( RelativeLayout, HoverBehavior, ParentFinder ):
             else:
                 elementPosition = ( elementPosition[0], elementPosition[1]-shipBlockWidth )
         return elementRectangles
-
-    def on_enter(self):
-        print(self)
-
-    def bombardGridxxx(self):
-        pass
 
     def calculateShipSize(self, shipLength):
         if self.direction==Ship.DIRECTION_HORIZONTAL:
@@ -181,14 +159,11 @@ class ShipElementRectangle( Widget, HoverBehavior, ParentFinder ):
         self.ship = ship
 
      def draw(self):
-         #grid = self.getParentByClass(Grid)
-         #size = grid.gridConfig().gridElementSize
          self.size=self.parent.gridConfig.shipBlockSize
          self.canvas.clear()
          elementRectangle = Rectangle(pos=(self.pos[0]+4,self.pos[1]+4), size=self.size) #todo: pos shoudl come from conf
          self.canvas.add( self.ship.color )
          self.canvas.add( elementRectangle )
-         #self.ship.shipRectangles.append( elementRectangle )
 
 # event bindings:
      def on_touch_down(self, touch): #this fires on the event that someone clicks on the ship
@@ -200,11 +175,3 @@ class ShipElementRectangle( Widget, HoverBehavior, ParentFinder ):
                 self.ship.shipStatus = self.ship.STATUS_SELECTED
 
                 return True
-
-     def on_enter(self):
-         2
-         #self.draw()
-
-     def on_leave(self):
-         2
-         #self.draw()

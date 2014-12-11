@@ -7,20 +7,13 @@ from .parentFinder import ParentFinder
 from .battleStatus import BattleStatus
 
 import collections
-from kivy.app import App
 from kivy.uix.widget import Widget
 from kivy.uix.label import Label
 from kivy.uix.button import Button
-from kivy.config import Config
 from kivy.graphics import *
 from kivy.graphics import Color, Ellipse, Line
-from kivy.core.text import Label as CoreLabel
 from kivy.uix.gridlayout import GridLayout
-from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.relativelayout import RelativeLayout
-from kivy.uix.stacklayout import StackLayout
-from kivy.properties import StringProperty, ObjectProperty, BooleanProperty, ListProperty
-import random
 
 #---------------------------------------------------------------------------------------------------
 #       @Grid
@@ -44,10 +37,8 @@ class Grid( GridLayout, ParentFinder):
         super().__init__(col_default_width=self.gridConfig.gridElementSize[0], col_force_default=True, row_default_height=self.gridConfig.gridElementSize[1], row_force_default=True, cols=11)
         self.colWidth = self.gridConfig.gridElementSize[0]
         self.rowHeight = self.gridConfig.gridElementSize[1]
-        #game.mainGrid = self
 
     def draw(self):
-        #self.getGame().testingMainGrid = self
         self.addGridElements()
         self.gameState.createGameStateMatrix()
 
@@ -81,12 +72,12 @@ class Grid( GridLayout, ParentFinder):
 
     def addGridElements(self):
         self.gridElements = collections.OrderedDict()
-        #self.get_root_window().children[0].gridElements = self.gridElements #screen
         for rowNr in self.getGame().mainConfig.rowNumbers:
             self.gridElements[ rowNr ] = collections.OrderedDict()
             for colNr, colCharacter in enumerate(self.getGame().mainConfig.columnChars):
                 if rowNr==0 and colNr==0:
-                    self.addTestingButton()
+                    #self.addTestingButton()
+                    self.add_widget(Widget())
                     continue
 
                 if rowNr==0 or colNr==0:
@@ -129,6 +120,7 @@ class GridBattlefieldElement( GridElement ):
     isLocked = False
 
     def __init__(self, gridConfig, rowNr, colChar, **kwargs):
+        self.tooltipRectangle = None
         self.rowNr = rowNr
         self.colChar = colChar
         self.gridConfig = gridConfig
@@ -141,17 +133,19 @@ class GridBattlefieldElement( GridElement ):
         self.game = self.get_root_window().children[0].game
 
     def removePointerRectangle(self):
-        self.remove_widget( self.tooltipRectangle )
+        if self.tooltipRectangle in self.children:
+            self.remove_widget( self.tooltipRectangle )
 
     def addPointerRectangle(self):
-        canShipBePlaced = self.getGame().selectedShip!=None and self.getGame().canShipBePlaced(self.getGame().selectedShip, self)
-        canBombard = self.getGame().canGridElementBeBombarded(self)
-        if  canShipBePlaced or canBombard:
-            tooltipRectangleColor = Color(0, 1, 0, .5)
-        else:
-            tooltipRectangleColor = Color(1, 0, 0, .5)
-        self.tooltipRectangle = PointerRectangle( self.gridConfig, tooltipRectangleColor )
-        self.add_widget( self.tooltipRectangle )
+        if self.getGame():
+            canShipBePlaced = self.getGame().selectedShip!=None and self.getGame().canShipBePlaced(self.getGame().selectedShip, self)
+            canBombard = self.getGame().canGridElementBeBombarded(self)
+            if  canShipBePlaced or canBombard:
+                tooltipRectangleColor = Color(0, 1, 0, .5)
+            else:
+                tooltipRectangleColor = Color(1, 0, 0, .5)
+            self.tooltipRectangle = PointerRectangle( self.gridConfig, tooltipRectangleColor )
+            self.add_widget( self.tooltipRectangle )
 
     def calculateElementRectanglePosition(self):
         return (5, 5)
@@ -193,10 +187,7 @@ class GridLabelElement( GridElement ):
     def __init__(self, gridConfig, text='', **kwargs):
         self.text = str(text)
         super().__init__(gridConfig=gridConfig, **kwargs)
-        #self.bind(on_motion=on_motion)
 
-        #def on_motion(self, etype, motionevent):
-        #    2
     def draw(self):
         elementText = Label(text=self.text)
         self.add_widget( elementText )
@@ -207,7 +198,6 @@ class GridLabelElement( GridElement ):
 class PointerRectangle( Widget ):
     def __init__(self, gridConfig, color, **kwargs):
         super().__init__( **kwargs)
-        #tooltipRectangleColor = Color(1, 0, 0, .5, mode='rgba')
         tooltipRectangleColor = color
         self.canvas.add( tooltipRectangleColor )
         tooltipRectangle = Rectangle(size=gridConfig.battlefieldRectangleSize, pos=[5,5])

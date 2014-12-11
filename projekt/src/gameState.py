@@ -2,7 +2,6 @@ __author__ = 'mihkel'
 from .gameconfig import MainConfig
 from .gameStateMatrixElement import GameStateMatrixElement
 
-from kivy.properties import StringProperty, ObjectProperty, BooleanProperty, ListProperty, DictProperty
 import collections
 #----------------------------------------------------------------------------------------------------------------
 #   GameStateMatrix
@@ -28,10 +27,6 @@ class GameStateMatrix():
     def print_matrix(self, matrix):
         for row,x in enumerate(matrix):
             print(x)
-
-    def getStateOnCoordinates(self, absoluteX, absoluteY):
-        123
-        #todo: gets state on given global coordinates
 
     def printGameStateMatrix(self):
         for rowNr, rowValues in self.gameStateMatrix.items():
@@ -113,7 +108,6 @@ class GameStateMatrix():
 
 #----------------------------------------------------------------------------------------------------------------
 #   GameState
-#       This class handles most checks, such as possibility to rotate or place ships
 #----------------------------------------------------------------------------------------------------------------
 class GameState( GameStateMatrix ):
     STATE_EMPTY = 'empty'
@@ -131,13 +125,7 @@ class GameState( GameStateMatrix ):
                 self.gameStateMatrix[ rowNr ][ colChar ] = GameStateMatrixElement(self, colChar, rowNr)
 
     def placeShipInGameStateMatrix(self, ship, colChar, rowNr):
-        print('.---------------------------------')
-        print(ship.length)
-        print(ship.shipStatus)
-        print(ship.direction)
-        print('.---------------------------------')
         self.addShipZoneToMatrix( ship, colChar, rowNr )
-        #todo: make this work when direction='vertical'
 
         for _ in range(0, ship.length):
             print(colChar, rowNr)
@@ -160,5 +148,3 @@ class GameState( GameStateMatrix ):
 
     def areUnsunkShipsLeftOnGrid(self):
         return len(self.ships)!=0
-
-        #print('jeeeeeeeeees')

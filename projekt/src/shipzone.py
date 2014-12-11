@@ -2,16 +2,12 @@ __author__ = 'mihkel'
 from .behaviours import HoverBehavior
 from .parentFinder import ParentFinder
 from .views import GridArea
-from .gameconfig import *
-#from .ships import Ship
-
 
 from kivy.graphics import *
 from kivy.uix.relativelayout import RelativeLayout
 from kivy.uix.floatlayout import FloatLayout
 from kivy.properties import StringProperty, ObjectProperty, BooleanProperty, ListProperty
 from kivy.uix.widget import Widget
-import random
 #---------------------------------------------------------------------------------------------------------------
 #   ShipZone
 #---------------------------------------------------------------------------------------------------------------
@@ -56,8 +52,6 @@ class ShipZone( RelativeLayout, HoverBehavior, ParentFinder ):
 
     def createShipZoneElements(self):
         shipZoneElements = []
-        #todo: take into account ship direction
-
         if self.ship.direction == self.ship.DIRECTION_HORIZONTAL:
             widthLength = self.ship.length+2
             heightLength = 3
@@ -75,10 +69,6 @@ class ShipZone( RelativeLayout, HoverBehavior, ParentFinder ):
                         continue
                 shipZoneElement = ShipZoneElement( shipZone=self, xMultiplier=x, yMultiplier=y )
                 shipZoneElements.append( shipZoneElement )
-        #shipZoneElement = ShipZoneElement( shipZone=self, xMultiplier=self.ship.length+1, yMultiplier=1 )
-        #shipZoneElements.append( shipZoneElement )
-        #shipZoneElement = ShipZoneElement( shipZone=self, xMultiplier=0, yMultiplier=1 )
-        #shipZoneElements.append( shipZoneElement )
 
         return shipZoneElements
 
@@ -94,7 +84,6 @@ class ShipZone( RelativeLayout, HoverBehavior, ParentFinder ):
         self.draw()
 
     def on_enter(self):
-        ##print('enter shipzone', self, self.pos)
         pass
 
 #---------------------------------------------------------------------------------------------------------------
@@ -130,6 +119,4 @@ class ShipZoneElement( Widget, ParentFinder, HoverBehavior):
         return self.shipZone.getParentByClass(GridArea).grid.gridConfig.gridElementSize
 
     def on_enter(self):
-        #if self.parent != None and self.getGame().ownShipGridArea and self.parent.parent in self.getGame().ownShipGridArea.ships:
-        ##print('enter shipzoneelement', self, self.pos)
         pass

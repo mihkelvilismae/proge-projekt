@@ -1,5 +1,4 @@
 __author__ = 'mihkel'
-#from .ships import Ship
 
 class GameStateMatrixElement():
 
@@ -19,10 +18,6 @@ class GameStateMatrixElement():
         self.colChar = colChar
 
     def addShip(self, ship):
-        #print('---------------')
-        #print('teeb GameStateMatrixElement.addship', self)
-        #print('paneb siia:', id(self.gameState.ships))
-        #print('laeva:', ship)
         if ship not in self.gameState.ships:
             self.gameState.ships.append( ship )
         self.ship = ship
@@ -31,17 +26,11 @@ class GameStateMatrixElement():
         ship.shipPositions.add((self.colChar, self.rowNr))
 
     def removeShip(self):
-        #print('REMOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOVES HSIP')
         self.ship.shipStateMatrixElements.remove(self)
-        #if len(self.ship.shipStateMatrixElements)==0 and self.ship in self.gameState.ships:
-        #    self.gameState.ships.remove( self.ship )
         self.childrenStates.remove(self.ship)
         self.ship.shipPositions.remove((self.colChar, self.rowNr))
-        #print('ennnne oli', self.gameState.ships)
         if len(self.ship.shipPositions)==0:
-            #print('TEEEEEEEEEEEEEEEEEEEEEEEEEEEGI')
             self.gameState.ships.remove( self.ship )
-            print(self.gameState.ships)
         self.ship = None
 
     def getCountOfZones(self):
@@ -64,9 +53,6 @@ class GameStateMatrixElement():
         if self.childrenStates.__contains__(child):
             self.childrenStates.remove(child)
 
-    #def setAsEmpty(self):
-    #    self.setChildren([])
-
     def getSimplifiedElement(self):
         if self.isEmpty():
             simplifiedElement = '0'
@@ -77,6 +63,4 @@ class GameStateMatrixElement():
         else: #todo: proper check for ship
             simplifiedElement = '.'
         return simplifiedElement
-
-
 
