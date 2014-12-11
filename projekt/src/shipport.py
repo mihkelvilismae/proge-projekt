@@ -1,18 +1,8 @@
 __author__ = 'mihkel'
-from kivy.app import App
-from kivy.uix.widget import Widget
 from kivy.uix.label import Label
-from kivy.uix.button import Button
-from kivy.config import Config
-from kivy.graphics import *
-from kivy.graphics import Color, Ellipse, Line
-from kivy.core.text import Label as CoreLabel
-from kivy.uix.gridlayout import GridLayout
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.relativelayout import RelativeLayout
-from kivy.uix.stacklayout import StackLayout
 from kivy.properties import StringProperty, ObjectProperty, BooleanProperty, ListProperty
-import random
 
 #---------------------------------------------------------------------------------------------------
 #       @ShipPort
@@ -26,8 +16,6 @@ class ShipPort( BoxLayout ): #todo: this should also show status of bombed ships
     def __init__(self, game, **kwargs):
         self.game = game
         super().__init__(orientation='vertical', **kwargs)
-        #self.createShips() #todo move this somewhere else
-        #self.add_widget(Button(text='vajutaaaaaaaaaaaaa'))
         self.bind(shipsInPort=self.onShipsInPort)
 
     def getShipByLength(self, length):
@@ -56,7 +44,6 @@ class ShipPier( RelativeLayout ):
         self.game = game
         super().__init__(size=(300, 80), size_hint=(None, None), **kwargs)
         self.bind(shipsInPier=self.on_shipsInPier)
-        #game.shipPort.shipPier[ int(shipLength) ] = []
 
     def draw(self):
         self.drawShipCount()

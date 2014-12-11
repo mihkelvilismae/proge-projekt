@@ -6,7 +6,6 @@ class BattleStatus():
     BOMBARD_RESULT_SUNK = 'sunk'
     BOMBARD_RESULT_MISS = 'miss'
     BOMBARD_RESULT_ENEMY_BOMBED_MY_GRID = 'enemyBombed'
-    #BOMBARD_SPECIAL_RESULT_GAME_OVER = 'gameOver'
 
     enemyShipsInfo = []
 

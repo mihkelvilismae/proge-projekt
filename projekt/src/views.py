@@ -2,22 +2,12 @@ __author__ = 'mihkel'
 
 from .shipport import ShipPort
 from .grid import Grid
-from .gameState import GameState
 
-from kivy.app import App
 from kivy.uix.widget import Widget
 from kivy.uix.label import Label
 from kivy.uix.button import Button
-from kivy.config import Config
-from kivy.graphics import *
-from kivy.graphics import Color, Ellipse, Line
-from kivy.core.text import Label as CoreLabel
-from kivy.uix.gridlayout import GridLayout
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.relativelayout import RelativeLayout
-from kivy.uix.stacklayout import StackLayout
-from kivy.properties import StringProperty, ObjectProperty, BooleanProperty, ListProperty
-import random
 
 #---------------------------------------------------------------------------------------------------
 #       MainMenuView
@@ -32,7 +22,7 @@ class MainMenuView( Widget ):
         self.game = self.parent.game
 
     def addStartButtonLabel(self):
-        randomlabel = Label(text='[ref=startGame]START[/ref]', markup=True)
+        randomlabel = Label(font_size='40sp', text='[ref=startGame][START][/ref]', markup=True, pos=(400,400))
         self.add_widget( randomlabel )
         def drawGameScreenView( object, value ):
             self.game.startGame()
@@ -43,9 +33,6 @@ class MainMenuView( Widget ):
 #---------------------------------------------------------------------------------------------------
 class GameScreenView( BoxLayout ):
     game = None
-    #shipPort = None
-    #smallerGrid = None
-    #mainGrid = None
     startingButton = None
     leftPane = None
     rightPane = None
@@ -56,22 +43,17 @@ class GameScreenView( BoxLayout ):
         self.rightPane = BoxLayout(orientation='vertical')
         self.add_widget(self.leftPane)
         self.add_widget(self.rightPane)
-        #self.size_hint = (1,1)
-        #self.size = (900,600)
 
     def draw(self):
         self.game = self.parent.game
-        #self.game = self.get_root_window().children[0]
         self.size = self.parent.size
         self.drawShipPlacementArea()
         self.drawShipPort()
 
     def addWidgetToGameScreenViewLeft(self, widgetToAdd):
-        #self.add_widget( widgetToAdd )
         self.leftPane.add_widget( widgetToAdd )
 
     def addWidgetToGameScreenViewRight(self, widgetToAdd):
-        #self.add_widget( widgetToAdd )
         self.rightPane.add_widget( widgetToAdd )
 
     def removeWidgetFromGameScreenView(self, widgetToRemove):
