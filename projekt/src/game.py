@@ -144,8 +144,8 @@ class Game( Widget ):
         shipsCountByLength = {1:4}
         shipsCountByLength = {1:1}
         shipsCountByLength = {1:1, 4:1}
-        shipsCountByLength = {1:4, 2:3, 3:2, 4:1}
         shipsCountByLength = {4:1}
+        shipsCountByLength = {1:4, 2:3, 3:2, 4:1}
         for shipLength, shipCount in shipsCountByLength.items():
             for _ in range(0, shipCount):
                 ship = Ship( gridConfig, shipLength )
