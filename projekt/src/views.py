@@ -32,7 +32,7 @@ class MainMenuView( Widget ):
         self.game = self.parent.game
 
     def addStartButtonLabel(self):
-        randomlabel = Label(text='[ref=startGame]START[/ref]', markup=True)
+        randomlabel = Label(font_size='40sp', text='[ref=startGame][START][/ref]', markup=True, pos=(400,400))
         self.add_widget( randomlabel )
         def drawGameScreenView( object, value ):
             self.game.startGame()
