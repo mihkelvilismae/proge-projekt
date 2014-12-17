@@ -43,6 +43,7 @@ class Grid( GridLayout, ParentFinder):
         self.gameState.createGameStateMatrix()
 
     def isElementInGridBounds(self, elementToCheck):
+
         elementToCheckX = elementToCheck.to_window(elementToCheck.x, elementToCheck.y)[0]
         elementToCheckY = elementToCheck.to_window(elementToCheck.x, elementToCheck.y)[1]
 
@@ -51,7 +52,8 @@ class Grid( GridLayout, ParentFinder):
         gridRightX = self.getGridBottomRight()[0]
         gridBottomY =  self.getGridBottomRight()[1]
 
-        if elementToCheckY < gridBottomY or elementToCheckY > gridTopY or elementToCheckX < gridLeftX or gridRightX < elementToCheckX:
+        # the "elementToCheckY > gridTopY-10" check is just a hacky way of solving the problem of upper-out-of-bounds shipZones not displaying correctly
+        if elementToCheckY < gridBottomY or elementToCheckY > gridTopY-10 or elementToCheckX < gridLeftX or gridRightX < elementToCheckX:
             return False
         else:
             return True

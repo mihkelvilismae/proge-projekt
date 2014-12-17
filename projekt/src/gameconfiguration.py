@@ -18,11 +18,11 @@ class GridConfig():
 
     def __init__(self, sizeMultiplier=1, **kwargs):
         if sizeMultiplier==1:
+            self.gridHeight = 500
+            self.gridWidth = 500
+        else:
             self.gridHeight = 300
             self.gridWidth = 300
-        else:
-            self.gridHeight = 200
-            self.gridWidth = 200
 
         self.gridElementSize = (self.gridWidth/11, self.gridHeight/11)
         self.battlefieldRectangleSize = (self.gridWidth/11-5, self.gridHeight/11-5)

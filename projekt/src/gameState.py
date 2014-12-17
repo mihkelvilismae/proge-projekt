@@ -128,7 +128,7 @@ class GameState( GameStateMatrix ):
         self.addShipZoneToMatrix( ship, colChar, rowNr )
 
         for _ in range(0, ship.length):
-            print(colChar, rowNr)
+            #print(colChar, rowNr) xxxxxxxxxxxxxxxxaaaaaaaaaaaaaaaaaaaaa
             self.getMatrixElement(colChar, rowNr).addShip( ship )
             if ship.direction==ship.DIRECTION_HORIZONTAL:
                 colChar = self.incrementChar( colChar )
@@ -148,3 +148,6 @@ class GameState( GameStateMatrix ):
 
     def areUnsunkShipsLeftOnGrid(self):
         return len(self.ships)!=0
+
+    def getNumberOfShipsLeftOnGrid(self):
+        return len(self.ships)

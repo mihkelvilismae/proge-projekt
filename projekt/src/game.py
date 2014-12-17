@@ -3,6 +3,7 @@ __author__ = 'mihkel'
 from .ships import Ship
 from .battleStatus import BattleStatus
 from .gameconfiguration import MainConfig
+from .ai import AI
 from .views import GridArea
 
 from kivy.clock import Clock
@@ -26,7 +27,7 @@ class Game( Widget ):
     activeArea = None
 
     def __init__(self, **kwargs):
-
+        self.AI = AI()
         self.xxx = [('A',1),('B',1),('C',1)]
         self.mainConfig = MainConfig()
         self.bind(allShipsOnGrid=self.onAllShipsOnGrid)
@@ -67,9 +68,11 @@ class Game( Widget ):
     def bombardGrid(self, gridElement):
         bombardResult = self.battleStatus.bombardGrid( gridElement.colChar, gridElement.rowNr)
         if bombardResult['result']==BattleStatus.BOMBARD_RESULT_HIT:
-            print('XXXXX PROCESS HIT')
+            #print('XXXXX PROCESS HIT')
+            pass
         elif bombardResult['result']==BattleStatus.BOMBARD_RESULT_MISS:
-            print('XXXXX PROCESS miss')
+            #print('XXXXX PROCESS miss')
+            pass
         else: #a ship is sunk
             print(bombardResult['sunkship'])
             sunkShip = self.putSunkShipOnEnemyGrid( bombardResult['sunkship'] )
@@ -81,19 +84,26 @@ class Game( Widget ):
         self.enemyTurn()
 
     def enemyTurn(self):
+        enemyBombardmentResult = None
+        myShipsLeftOnGrid = self.ownShipGridArea.grid.gameState.getNumberOfShipsLeftOnGrid()
         enemyBombardment = self.getEnemyBombardmentPosition()
         self.ownShipGridArea.grid.getGridElementOnPosition( enemyBombardment[0], enemyBombardment[1] ).bombard(BattleStatus.BOMBARD_RESULT_ENEMY_BOMBED_MY_GRID) #todo: this should use mode complex logic
         if self.ownShipGridArea.grid.gameState.getMatrixElement( enemyBombardment[0], enemyBombardment[1] ).ship != None:
+            enemyBombardmentResult = BattleStatus.BOMBARD_RESULT_HIT
             self.ownShipGridArea.grid.gameState.getMatrixElement( enemyBombardment[0], enemyBombardment[1] ).removeShip(  )
+        if myShipsLeftOnGrid!=self.ownShipGridArea.grid.gameState.getNumberOfShipsLeftOnGrid():
+            enemyBombardmentResult = BattleStatus.BOMBARD_RESULT_SUNK
         if self.ownShipGridArea.grid.gameState.areUnsunkShipsLeftOnGrid()==False:
             self.endGame(False)
 
+        if enemyBombardmentResult == None:
+            enemyBombardmentResult = BattleStatus.BOMBARD_RESULT_MISS
+
+        self.AI.setBombingResult( enemyBombardmentResult )
+
     def getEnemyBombardmentPosition(self):
-        #suitablePostition = self.ownShipGridArea.grid.gridElements
-        #return self.xxx.pop()
-        import random
-        position = random.randint(0,len(self.suitableEnemyPositions)-1)
-        return self.suitableEnemyPositions.pop(position)
+        return self.AI.giveCoordinatesToBomb()
+
 
     def disallowBombardment(self, grid):
         grid.isBombardmentAllowed = False
@@ -142,10 +152,11 @@ class Game( Widget ):
     def createShips(self, gridConfig):
         ships = []
         shipsCountByLength = {1:4}
-        shipsCountByLength = {1:1}
         shipsCountByLength = {1:1, 4:1}
         shipsCountByLength = {4:1}
         shipsCountByLength = {1:4, 2:3, 3:2, 4:1}
+        shipsCountByLength = {1:1}
+        shipsCountByLength = {2:2}
         for shipLength, shipCount in shipsCountByLength.items():
             for _ in range(0, shipCount):
                 ship = Ship( gridConfig, shipLength )
