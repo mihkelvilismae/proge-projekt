@@ -315,3 +315,6 @@ class AI():
         return {'positionsByShip': {}, 'shipsByLength': {2: [{'direction': 'H', 'startColChar': 'D', 'shipId': 'D5', 'startRowNr': 5}]}, 'ships': {'D5': {'shipPositions': {('D', 5), ('E', 5)}, 'shipId': 'D5', 'startRowNr': 5, 'direction': 'H', 'length': 2, 'startColChar': 'D'}}, 'shipsByPosition': {'E5': 'D5', 'D5': 'D5'}}
         pass
 
+def numbersToLetters(self, coord):
+    letters = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"]
+    return letters[coord[0]], coord[1]
