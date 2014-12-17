@@ -48,8 +48,16 @@ class Game( Widget ):
 
     def startBattle(self, instance):
         self.unselectShips()
-        serializedGameState = self.shipPlacementArea.grid.gameState.getGameStateMatrixSerialized()
-        print(serializedGameState)
+
+        #----------------------------
+        #----------------------------
+        # SEEE KOHT:
+        serializedGameState = self.AI.getEnemyShipPlacement()
+        print('AI-ST', serializedGameState)
+        #----------------------------
+        #----------------------------
+
+
         self.battleStatus = BattleStatus( serializedGameState )
         self.screen.gameScreenView.removeWidgetFromGameScreenView( self.screen.gameScreenView.startingButton )
         self.screen.gameScreenView.removeWidgetFromGameScreenView( self.shipPlacementArea )
@@ -61,6 +69,7 @@ class Game( Widget ):
         self.shipPort.isSelectShipsAllowed = False
         self.populateEnemyPort()
 
+        serializedGameState = self.shipPlacementArea.grid.gameState.getGameStateMatrixSerialized()
         def populateGridFromSerializedGameState(dt): #fixme: why is the clock required, how can i do it without it :S
             self.populateGridFromSerializedGameState( self.ownShipGridArea.grid, serializedGameState )
         Clock.schedule_once(populateGridFromSerializedGameState, 0)
