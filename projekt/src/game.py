@@ -155,8 +155,8 @@ class Game( Widget ):
         shipsCountByLength = {1:1, 4:1}
         shipsCountByLength = {4:1}
         shipsCountByLength = {1:4, 2:3, 3:2, 4:1}
-        shipsCountByLength = {1:1}
         shipsCountByLength = {2:2}
+        shipsCountByLength = {2:1}
         for shipLength, shipCount in shipsCountByLength.items():
             for _ in range(0, shipCount):
                 ship = Ship( gridConfig, shipLength )
@@ -252,12 +252,7 @@ class Game( Widget ):
     def testing(self):
 
         print('-----------------TESTING START------------------------')
-        if (self.selectedShip):
-            print(self.selectedShip.length)
-            print(self.selectedShip.shipStatus)
-            print(self.selectedShip.direction)
-        else:
-            print('noe selectedd')
+        print('ownshps', self.ownShipGridArea.grid.gameState.getGameStateMatrixSerialized())
+
         print('-----------------TESTING END------------------------')
-        #print('ownshps', self.ownShipGridArea.grid.gameState.ships)
         #print('enemyships', self.enemyShipGridArea.ships)

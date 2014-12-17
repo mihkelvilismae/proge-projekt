@@ -78,8 +78,8 @@ class Grid( GridLayout, ParentFinder):
             self.gridElements[ rowNr ] = collections.OrderedDict()
             for colNr, colCharacter in enumerate(self.getGame().mainConfig.columnChars):
                 if rowNr==0 and colNr==0:
-                    #self.addTestingButton()
-                    self.add_widget(Widget())
+                    self.addTestingButton()
+                    #self.add_widget(Widget())
                     continue
 
                 if rowNr==0 or colNr==0:

@@ -311,3 +311,6 @@ class AI():
         return ('A',self.xxx.pop()) #vms
         #return ('A',randint(1,10)) #vms
 
+    def getEnemyShipPlacement(self):
+        pass
+
