@@ -1,7 +1,7 @@
 __author__ = 'mihkel'
 
 from .behaviours import HoverBehavior
-from .gameconfig import MainConfig
+from .gameconfiguration import MainConfig
 from .shipzone import ShipZone
 from .parentFinder import ParentFinder
 from .views import GridArea

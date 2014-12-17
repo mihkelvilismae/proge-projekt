@@ -1,5 +1,5 @@
 __author__ = 'mihkel'
-from .gameconfig import MainConfig
+from .gameconfiguration import MainConfig
 from .gameStateMatrixElement import GameStateMatrixElement
 
 import collections

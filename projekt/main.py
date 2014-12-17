@@ -3,7 +3,7 @@ import kivy
 #from src.gameonfig import *
 
 from src.game import Game
-from src.gameconfig import MainConfig, GridConfig
+from src.gameconfiguration import MainConfig, GridConfig
 from src.views import MainMenuView, GameScreenView
 from src.behaviours import HoverBehavior
 from src.screen import Screen

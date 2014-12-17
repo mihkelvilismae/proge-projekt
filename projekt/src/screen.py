@@ -1,6 +1,6 @@
 __author__ = 'mihkel'
 from kivy.uix.widget import Widget
-from src.gameconfig import MainConfig, GridConfig
+from src.gameconfiguration import MainConfig, GridConfig
 from src.views import MainMenuView, GameScreenView
 #---------------------------------------------------------------------------------------------------
 #       Page Initializations

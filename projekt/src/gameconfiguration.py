@@ -7,7 +7,7 @@ class MainConfig():
         self.columnChars = list(' ABCDEFGHIJ')
         self.rowNumbers = list(range(0,11))
     # application window size:
-        self.windowWidth = 1400
+        self.windowWidth = 1000
         self.windowHeight = 700
         self.windowSize = (self.windowWidth, self.windowHeight)
 
@@ -18,11 +18,11 @@ class GridConfig():
 
     def __init__(self, sizeMultiplier=1, **kwargs):
         if sizeMultiplier==1:
-            self.gridHeight = 600
-            self.gridWidth = 600
+            self.gridHeight = 300
+            self.gridWidth = 300
         else:
-            self.gridHeight = 350
-            self.gridWidth = 350
+            self.gridHeight = 200
+            self.gridWidth = 200
 
         self.gridElementSize = (self.gridWidth/11, self.gridHeight/11)
         self.battlefieldRectangleSize = (self.gridWidth/11-5, self.gridHeight/11-5)

@@ -2,7 +2,7 @@ __author__ = 'mihkel'
 
 from .ships import Ship
 from .battleStatus import BattleStatus
-from .gameconfig import MainConfig
+from .gameconfiguration import MainConfig
 from .views import GridArea
 
 from kivy.clock import Clock

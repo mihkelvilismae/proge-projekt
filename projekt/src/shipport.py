@@ -7,7 +7,7 @@ from kivy.properties import StringProperty, ObjectProperty, BooleanProperty, Lis
 #---------------------------------------------------------------------------------------------------
 #       @ShipPort
 #---------------------------------------------------------------------------------------------------
-class ShipPort( BoxLayout ): #todo: this should also show status of bombed ships
+class ShipPort( BoxLayout ):
     shipPiers = {}
     shipsInPort = ListProperty([])
     game = None

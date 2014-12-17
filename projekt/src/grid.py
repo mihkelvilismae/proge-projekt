@@ -1,7 +1,7 @@
 __author__ = 'mihkel'
 
 from .behaviours import HoverBehavior
-from .gameconfig import GridConfig
+from .gameconfiguration import GridConfig
 from .gameState import GameState
 from .parentFinder import ParentFinder
 from .battleStatus import BattleStatus
