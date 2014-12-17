@@ -51,7 +51,9 @@ class Game( Widget ):
 
         #----------------------------
         #----------------------------
-        # SEEE KOHT:
+        # kui self.AI.getEnemyShipPlacement() on allpool, siis kasutab sinu funktsiooni tulemust,
+        # kui self.shipPlacementArea.grid.gameState.getGameStateMatrixSerialized() on allpool, siis kasutab sama paigust, mida sinu laevad omavad
+        serializedGameState = self.shipPlacementArea.grid.gameState.getGameStateMatrixSerialized()
         serializedGameState = self.AI.getEnemyShipPlacement()
         print('AI-ST', serializedGameState)
         #----------------------------
