@@ -53,8 +53,8 @@ class Game( Widget ):
         #----------------------------
         # kui self.AI.getEnemyShipPlacement() on allpool, siis kasutab sinu funktsiooni tulemust,
         # kui self.shipPlacementArea.grid.gameState.getGameStateMatrixSerialized() on allpool, siis kasutab sama paigust, mida sinu laevad omavad
-        serializedGameState = self.shipPlacementArea.grid.gameState.getGameStateMatrixSerialized()
         serializedGameState = self.AI.getEnemyShipPlacement()
+        serializedGameState = self.shipPlacementArea.grid.gameState.getGameStateMatrixSerialized()
         print('AI-ST', serializedGameState)
         #----------------------------
         #----------------------------
@@ -113,6 +113,10 @@ class Game( Widget ):
         self.AI.setBombingResult( enemyBombardmentResult )
 
     def getEnemyBombardmentPosition(self):
+        import random
+        position = random.randint(0,len(self.suitableEnemyPositions)-1)
+        return self.suitableEnemyPositions.pop(position)
+
         return self.AI.giveCoordinatesToBomb()
 
 
@@ -163,11 +167,12 @@ class Game( Widget ):
     def createShips(self, gridConfig):
         ships = []
         shipsCountByLength = {1:4}
-        shipsCountByLength = {1:1, 4:1}
         shipsCountByLength = {4:1}
-        shipsCountByLength = {1:4, 2:3, 3:2, 4:1}
         shipsCountByLength = {2:2}
         shipsCountByLength = {2:1}
+        shipsCountByLength = {1:1, 4:1}
+        shipsCountByLength = {1:1}
+        shipsCountByLength = {1:4, 2:3, 3:2, 4:1}
         for shipLength, shipCount in shipsCountByLength.items():
             for _ in range(0, shipCount):
                 ship = Ship( gridConfig, shipLength )
