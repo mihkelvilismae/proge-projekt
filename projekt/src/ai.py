@@ -318,3 +318,6 @@ class AI():
 def numbersToLetters(self, coord):
     letters = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"]
     return letters[coord[0]], coord[1]
+
+def coords(x, y):
+    return x, y
