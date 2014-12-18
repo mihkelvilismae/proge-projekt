@@ -104,85 +104,125 @@ class AI():
             submarineNumber -= 1
         return grid
 
-    def isolateAreaHelp(self, x, y, grid, shipLenght, pos, controlArea):
-        if pos == 1:
-            if x + shipLenght <= 9 and x - 1 >= 0 and y + 1 <= 9 and y - 1 >= 0:
-                a = -1
-                while a < y + 1:
-                    i = -1
-                    while i < x + shipLenght:
-                        controlArea.append(grid[y + a][x + i])
-                        i += 1
-                    a += 1
-                return controlArea
-            elif x + shipLenght <= 9 and x - 1 >= 0 and y + 1 <= 9 and y - 1 < 0:
-                a = 0
-                while a < y + 1:
-                    i = -1
-                    while i < x + shipLenght:
-                        controlArea.appned(grid[y + a][x + i])
-                        i += 1
-                    a += 1
-                return controlArea
-            elif x + shipLenght <= 9 and x - 1 >= 0 and y + 1 > 9 and y - 1 >= 0:
-                a = -1
-                while a + y < 9:
-                    i = -1
-                    while i < x + shipLenght:
-                        controlArea.append(grid[y + a][x + i])
-                        i += 1
-                    a += 1
-                return controlArea
-            elif x + shipLenght > 9 and x - 1 >= 0 and y + 1 <= 9 and y - 1 >= 0:
-                return grid
-            elif x + shipLenght <= 9 and x - 1 < 0 and y + 1 <= 9 and y - 1 >= 0:
-                a = -1
-                while a < y + 1:
-                    i = 0
-                    while i < x + shipLenght:
-                        controlArea.append(grid[y + a][x + i])
-                        i += 1
-                    a += 1
-                return controlArea
-        elif pos == 2:
-            if y + shipLenght <= 9 and y - 1 >= 0 and x + 1 <= 9 and x - 1 >= 0:
-                a = -1
-                while a < y + shipLenght:
-                    i = -1
-                    while i < x + 1:
-                        controlArea.append(grid[y + a][x + i])
-                        i += 1
-                    a += 1
-                return controlArea
-            elif y + shipLenght <= 9 and y - 1 >= 0 and x + 1 <= 9 and x - 1 < 0:
-                a = -1
-                while a < y + shipLenght:
-                    i = 0
-                    while i < x + 1:
-                        controlArea.append(grid[y + a][x + i])
-                        i += 1
-                    a += 1
-                return controlArea
-            elif y + shipLenght <= 9 and y - 1 >= 0 and x + 1 > 9 and x - 1 >= 0:
-                a = -1
-                while a < y + shipLenght:
-                    i = -1
-                    while i + x < 9:
-                        controlArea.append(grid[y + a][x + i])
-                        i += 1
-                    a += 1
-                return controlArea
-            elif y + shipLenght <= 9 and y - 1 < 0 and x + 1 <= 9 and x - 1 >= 0:
-                a = 0
-                while a < y + shipLenght:
-                    i = -1
-                    while i < y + shipLenght:
-                        controlArea.append(grid[y + a][x + i])
-                        i += 1
-                    a += 1
-                return controlArea
-            elif y + shipLenght > 9 and y - 1 >= 0 and x + 1 <= 9 and x - 1 >= 0:
-                return grid
+ def isolateAreaHelp(self, x, y, grid, shipLenght, pos, controlArea):
+    if pos == 1:
+        if x + shipLenght <= 9 and x - 1 >= 0 and y + 1 <= 9 and y - 1 >= 0:
+            a = -1
+            while a < y + 1:
+                i = -1
+                while i < x + shipLenght:
+                    controlArea.append(grid[y + a][x + i])
+                    i += 1
+                a += 1
+            return controlArea
+        elif x + shipLenght <= 9 and x - 1 >= 0 and y + 1 <= 9 and y - 1 < 0:
+            a = 0
+            while a < y + 1:
+                i = -1
+                while i < x + shipLenght:
+                    controlArea.appned(grid[y + a][x + i])
+                    i += 1
+                a += 1
+            return controlArea
+        elif x + shipLenght <= 9 and x - 1 >= 0 and y + 1 > 9 and y - 1 >= 0:
+            a = -1
+            while a + y < 9:
+                i = -1
+                while i < x + shipLenght:
+                    controlArea.append(grid[y + a][x + i])
+                    i += 1
+                a += 1
+            return controlArea
+        elif x + shipLenght > 9 and x - 1 >= 0 and y + 1 <= 9 and y - 1 >= 0:
+            return grid
+        elif x + shipLenght <= 9 and x - 1 < 0 and y + 1 <= 9 and y - 1 >= 0:
+            a = -1
+            while a < y + 1:
+                i = 0
+                while i < x + shipLenght:
+                    controlArea.append(grid[y + a][x + i])
+                    i += 1
+                a += 1
+            return controlArea
+        elif x + shipLenght <= 9 and x - 1 < 0 and y + 1 > 9 and y - 1 >= 0:
+            a = -1
+            while a < y:
+                i = 0
+                while i < x + shipLenght:
+                    controlArea.append(grid[y + a][x + i])
+                    i += 1
+                a += 1
+            return controlArea
+        elif x + shipLenght > 9 and x - 1 >= 0 and y + 1 > 9 and y - 1 >= 0:
+            return grid
+        elif x + shipLenght > 9 and x - 1 < 0 and y + 1 <= 9 and y - 1 >= 0:
+            return grid
+        elif x + shipLenght <= 9 and x - 1 < 0 and y + 1 <= 9 and y - 1 < 0:
+            a = 0
+            while a < y + 1:
+                i = 0
+                while i < x + shipLenght:
+                    controlArea.append(grid[y + a][x + i])
+            return controlArea
+    elif pos == 2:
+        if y + shipLenght <= 9 and y - 1 >= 0 and x + 1 <= 9 and x - 1 >= 0:
+            a = -1
+            while a < y + shipLenght:
+                i = -1
+                while i < x + 1:
+                    controlArea.append(grid[y + a][x + i])
+                    i += 1
+                a += 1
+            return controlArea
+        elif y + shipLenght <= 9 and y - 1 >= 0 and x + 1 <= 9 and x - 1 < 0:
+            a = -1
+            while a < y + shipLenght:
+                i = 0
+                while i < x + 1:
+                    controlArea.append(grid[y + a][x + i])
+                    i += 1
+                a += 1
+            return controlArea
+        elif y + shipLenght <= 9 and y - 1 >= 0 and x + 1 > 9 and x - 1 >= 0:
+            a = -1
+            while a < y + shipLenght:
+                i = -1
+                while i + x < 9:
+                    controlArea.append(grid[y + a][x + i])
+                    i += 1
+                a += 1
+            return controlArea
+        elif y + shipLenght <= 9 and y - 1 < 0 and x + 1 <= 9 and x - 1 >= 0:
+            a = 0
+            while a < y + shipLenght:
+                i = -1
+                while i < x + 1:
+                    controlArea.append(grid[y + a][x + i])
+                    i += 1
+                a += 1
+            return controlArea
+        elif y + shipLenght > 9 and y - 1 >= 0 and x + 1 <= 9 and x - 1 >= 0:
+            return grid
+        elif y + shipLenght > 9 and y - 1 >= 0 and x + 1 > 9 and x - 1 >= 0:
+            return grid
+        elif y + shipLenght > 9 and y - 1 >= 0 and x + 1 <= 9 and x - 1 < 0:
+            return grid
+        elif y + shipLenght <= 9 and y - 1 < 0 and x + 1 <= 9 and x - 1 >= 0:
+            a = 0
+            while a < y + shipLenght:
+                i = -1
+                while i < x+ 1:
+                    controlArea.append(grid[y + a][x + i])
+                    i += 1
+                a += 1
+            return controlArea
+        elif y + shipLenght <= 9 and y - 1 < 0 and x + 1 > 9 and x - 1 >= 0:
+            a = 0
+            while a < y + shipLenght:
+                i = -1
+                while i + x < 9:
+                    controlArea.append(grid[y + a][x + a])
+            return controlArea
 
 
     def isolateArea(self, x, y, grid, shipType, pos):  #Pos 1 = horisontaalselt ja pos 2 = vertikaalselt
@@ -287,7 +327,24 @@ class AI():
             for x in y:
                 line.append(x)
         return line
+        
+def getEnemyShipPlacement(self, grid, x, y, pos, shipLenght):
+    startColChar = numbersToLetters(self, y)
+    startRowNum = x
+    lenght = shipLenght
+    shipPositions = set()
+    i = 0
+    if pos == 1:
+        direction = "H"
+        while i < shipLenght:
+            shipPositions.update(startColChar, startRowNum + i)
+    else:
+        direction = "V"
+        while i < shipLenght:
+            shipPositions.update(startColChar, startRowNum + i)
+    shipId = numbersToLetters(self, y) + startRowNum
 
+    return #Stuff
     #-----------------------------------------------------------------------------------------------------
     #            These functions are called by the game:
     #-----------------------------------------------------------------------------------------------------
