@@ -275,7 +275,7 @@ class AI():
 
     # bombingResult = dict('status'=> ['hit', 'miss', 'sunk'], 'sunkShipInfo'=> [siia tuleb info ainult siis, kui status='sunk', aga sellele tuleb mõelda hiljem] )
     def setBombingResult(self, bombingResult):
-        print('pommitmise tulemus:', bombingResult)
+        #print('pommitmise tulemus:', bombingResult)
 
         #kui on plaanis hakata arvestama pommitamise tulemust uue pommitmaise korral, siis seda pead täiendama
         #
