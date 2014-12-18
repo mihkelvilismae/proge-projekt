@@ -268,7 +268,8 @@ class Game( Widget ):
     def testing(self):
 
         print('-----------------TESTING START------------------------')
-        print('ownshps', self.ownShipGridArea.grid.gameState.getGameStateMatrixSerialized())
+        #print('ownshps', self.ownShipGridArea.grid.gameState.getGameStateMatrixSerialized())
+        self.AI.isolateAreaHelp(9,9,None,3,2,None)
 
         print('-----------------TESTING END------------------------')
         #print('enemyships', self.enemyShipGridArea.ships)
