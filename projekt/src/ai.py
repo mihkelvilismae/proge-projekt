@@ -66,6 +66,7 @@ class AI():
             return False
 
     def checkValue(self, x, y, grid): #Vaatab, mis märge on nendel koordinaatidel
+        print(x,y)
         if grid[y][x] == 0:
             return 0
         elif grid[y][x] == 1:
@@ -118,7 +119,7 @@ class AI():
                     if (xColumn<0 or yRow<0 or xColumn>9 or yRow>9):
                         continue
                     areasAsTupleList.append( (xColumn, yRow) )
-        return areaAsTupleList
+        return areasAsTupleList
 
 
     def isolateArea(self, x, y, grid, shipType, pos):  #Pos 1 = horisontaalselt ja pos 2 = vertikaalselt
@@ -127,67 +128,67 @@ class AI():
         controlArea = []
         return self.controlIso(self.isolateAreaHelp(x, y, grid, shipLenght, pos, controlArea))
 
-    def placeDestroyer(grid, destroyerNumber):
+    def placeDestroyer(self, grid, destroyerNumber):
         shipType = 1
         while destroyerNumber != 0:
             x = randint(0, 9)
             y = randint(0, 9)
             pos = randint(1, 2)
-            if checkValue(x, y, grid) == 0 and isolateArea(x, y, grid, shipType, pos) is True:
+            if self.checkValue(x, y, grid) == 0 and self.isolateArea(x, y, grid, shipType, pos) is True:
                 if pos == 1:
                     i = 0
                     while i < 2:
-                        placeShip(x + i, y, grid)
-                        getEnemyShipPlacement(self, ships, x, y, pos, 2)
+                        self.placeShip(x + i, y, grid)
+                        self.getEnemyShipPlacement(self.ships, x, y, pos, 2)
                         i += 1
                 elif pos == 2:
                     i = 0
                     while i < 2:
-                        placeShip(x, y + i, grid)
-                        getEnemyShipPlacement(self, ships, x, y, pos, 2)
+                        self.placeShip(x, y + i, grid)
+                        self.getEnemyShipPlacement( self.ships, x, y, pos, 2)
                         i += 1
                 destroyerNumber -= 1
         return grid
 
-    def placeCruiser(grid, cruiserNumber):
+    def placeCruiser(self, grid, cruiserNumber):
         shipType = 2
         while cruiserNumber != 0:
             x = randint(0, 9)
             y = randint(0, 9)
             pos = randint(1, 2)
-            if checkValue(x, y, grid) == 0 and isolateArea(x, y, grid, shipType, pos) is True:
+            if self.checkValue(x, y, grid) == 0 and self.isolateArea(x, y, grid, shipType, pos) is True:
                 if pos == 1:
                     i = 0
                     while i < 3:
-                        placeShip(x + i, y, grid)
-                        getEnemyShipPlacement(self, ships, x, y, pos, 3)
+                        self.placeShip(x + i, y, grid)
+                        self.getEnemyShipPlacement(self.ships, x, y, pos, 3)
                         i += 1
                 elif pos == 2:
                     i = 0
                     while i < 3:
-                        placeShip(x, y + i, grid)
-                        getEnemyShipPlacement(self, ships, x, y, pos, 3)
+                        self.placeShip(x, y + i, grid)
+                        self.getEnemyShipPlacement(self.ships, x, y, pos, 3)
                         i += 1
                 cruiserNumber -= 1
         return grid
 
-    def placeBattleship(grid):
+    def placeBattleship(self, grid):
         shipType = 3
         x = randint(0, 9)
         y = randint(0, 9)
         pos = randint(1, 2)
-        if checkValue(x, y, grid) == 0 and isolateArea(x, y, grid, shipType, pos) is True:
+        if self.checkValue(x, y, grid) == 0 and self.isolateArea(x, y, grid, shipType, pos) is True:
             if pos == 1:
                 i = 0
                 while i < 4:
-                    placeShip(x + i, y, grid)
-                    getEnemyShipPlacement(self, ships, x, y, pos, 4)
+                    self.placeShip(x + i, y, grid)
+                    self.getEnemyShipPlacement(self.ships, x, y, pos, 4)
                     i += 1
             elif pos == 2:
                 i = 0
                 while i < 4:
-                    placeShip(x, y + i, grid)
-                    getEnemyShipPlacement(self, ships, x, y, pos, 4)
+                    self.placeShip(x, y + i, grid)
+                    self.getEnemyShipPlacement(self.ships, x, y, pos, 4)
                     i += 1
         return grid
 
@@ -227,7 +228,9 @@ class AI():
 
     def numbersToLetters(self, coord):
         letters = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"]
-        return letters[coord[0]], coord[1]
+        #return letters[coord[0]], coord[1]
+        #return letters[coord[0]]
+        return letters[coord]
 
     def coords(x, y):
         return x, y
@@ -239,28 +242,32 @@ class AI():
         return grids
     
     def getEnemyShipPlacement(self, ships, x, y, pos, shipLenght):
-        startColChars = numbersToLetters(self, y)
+        startColChars = self.numbersToLetters(y)
         startRowNumb = x
         length = shipLenght
         shipPositionsCoord = set()
         i = 0
         if pos == 1:
             direction = "H"
-            while i < shipLenght:
-                shipPositionsCoord.update(startColChars, startRowNumb + i)
+            while i < shipLenght-1:
+                shipPositionsCoord.update((startColChars, startRowNumb + i))
+                i += 1
         else:
             direction = "V"
-            while i < shipLenght:
-                shipPositionsCoord.update(numbersToLetters(self, y + i), startRowNumb)
-        shipId = dict(numbersToLetters(self, y) + startRowNumb)
+            while i < shipLenght-1:
+                shipPositionsCoord.update((self.numbersToLetters( y + i), startRowNumb))
+                i += 1
+                #XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+        #shipId = dict(self.numbersToLetters( y ) + str(startRowNumb))
+        shipId = dict()
         shipId["shipPosition"] = set()
         shipId["shipPosition"] = shipPositionsCoord
         shipId["startRowNum"] = startRowNumb
         shipId["startColChar"] = startColChars
         shipId["length"] = length
         shipId["direction"] = direction
-        shipId["shipId"] = numbersToLetters(self, y) + startRowNumb
-        ships[str(numbersToLetters(self, y) + startRowNumb)] = shipId
+        shipId["shipId"] = self.numbersToLetters( y) + str(startRowNumb)
+        ships[str(self.numbersToLetters(y) + str(startRowNumb))] = shipId
         return ships
     #-----------------------------------------------------------------------------------------------------
     #            These functions are called by the game:
@@ -285,12 +292,15 @@ class AI():
         #return ('A',self.xxx.pop()) #vms
         return ('A',randint(1,10)) #vms
 
-    def getEnemyShipPlacement(self):
-        return {'positionsByShip': {}, 'shipsByLength': {2: [{'direction': 'H', 'startColChar': 'D', 'shipId': 'D5', 'startRowNr': 5}]}, 'ships': {'D5': {'shipPositions': {('D', 5), ('E', 5)}, 'shipId': 'D5', 'startRowNr': 5, 'direction': 'H', 'length': 2, 'startColChar': 'D'}}, 'shipsByPosition': {'E5': 'D5', 'D5': 'D5'}}
+    def getEnemyShipPlacementDict(self):
+        self.placeAll()
+        return self.ships
+        #return {'positionsByShip': {}, 'shipsByLength': {2: [{'direction': 'H', 'startColChar': 'D', 'shipId': 'D5', 'startRowNr': 5}]}, 'ships': {'D5': {'shipPositions': {('D', 5), ('E', 5)}, 'shipId': 'D5', 'startRowNr': 5, 'direction': 'H', 'length': 2, 'startColChar': 'D'}}, 'shipsByPosition': {'E5': 'D5', 'D5': 'D5'}}
         pass
     
-    def placeAll(grid):
-        placeBattleship(grid)
-        placeCruiser(grid, 2)
-        placeDestroyer(grid, 3)
-        placeSubmarine(grid, 4)
+    def placeAll(self):
+        grid = self.playerGrid
+        self.placeBattleship(grid)
+        self.placeCruiser(grid, 2)
+        self.placeDestroyer(grid, 3)
+        self.placeSubmarine(grid, 4)

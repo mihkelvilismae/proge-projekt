@@ -53,7 +53,7 @@ class Game( Widget ):
         #----------------------------
         # kui self.AI.getEnemyShipPlacement() on allpool, siis kasutab sinu funktsiooni tulemust,
         # kui self.shipPlacementArea.grid.gameState.getGameStateMatrixSerialized() on allpool, siis kasutab sama paigust, mida sinu laevad omavad
-        serializedGameState = self.AI.getEnemyShipPlacement()
+        serializedGameState = self.AI.getEnemyShipPlacementDict()
         serializedGameState = self.shipPlacementArea.grid.gameState.getGameStateMatrixSerialized()
         print('AI-ST', serializedGameState)
         #----------------------------
@@ -171,8 +171,8 @@ class Game( Widget ):
         shipsCountByLength = {2:2}
         shipsCountByLength = {2:1}
         shipsCountByLength = {1:1, 4:1}
-        shipsCountByLength = {1:1}
         shipsCountByLength = {1:4, 2:3, 3:2, 4:1}
+        shipsCountByLength = {1:1}
         for shipLength, shipCount in shipsCountByLength.items():
             for _ in range(0, shipCount):
                 ship = Ship( gridConfig, shipLength )
@@ -269,7 +269,8 @@ class Game( Widget ):
 
         print('-----------------TESTING START------------------------')
         #print('ownshps', self.ownShipGridArea.grid.gameState.getGameStateMatrixSerialized())
-        self.AI.isolateAreaHelp(9,9,None,3,2,None)
+        #self.AI.isolateAreaHelp(9,9,None,3,2,None)
+        print(self.AI.ships)
 
         print('-----------------TESTING END------------------------')
         #print('enemyships', self.enemyShipGridArea.ships)
